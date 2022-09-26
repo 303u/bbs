@@ -1,0 +1,17 @@
+# node项目内已安装的包
+node_modules/
+# 前端项目编译后的文件
+dist/
+# 备份数据库
+db/
+
+# 忽略固定依赖达到保持最新版本
+package-lock.json
+
+# 敏感类型忽略
+*.env*
+*.log*
+*.db*
+
+# python编译文件忽略
+*.py[cod]

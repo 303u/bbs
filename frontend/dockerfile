@@ -1,0 +1,15 @@
+# 依赖镜像
+FROM nginx:1.23
+
+# 信息
+LABEL by="June"
+
+# 允许指定容器使用的端口
+EXPOSE 80
+
+# 指定工作路径
+WORKDIR /
+
+# 拷贝到镜像
+COPY ["./dist", "/html"]
+COPY ["./nginx.conf", "/etc/nginx/nginx.conf"]

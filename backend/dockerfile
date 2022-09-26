@@ -1,0 +1,20 @@
+# 依赖镜像
+FROM python:3.10-slim
+
+# 信息
+LABEL by="June"
+
+# 允许指定容器使用的端口
+EXPOSE 8000
+
+# 指定工作路径
+WORKDIR /
+
+# 拷贝到镜像
+COPY ["./app/" ,"./requirements.txt", "./log_config.json", "/app/"]
+
+# 创建镜像时运行的bash命令
+RUN pip install --no-cache-dir -r /app/requirements.txt -i https://pypi.mirrors.ustc.edu.cn/simple/
+
+# 运行容器时执行的bash命令
+CMD sleep 30 && uvicorn app:app --host 0.0.0.0 --log-config ./app/log_config.json

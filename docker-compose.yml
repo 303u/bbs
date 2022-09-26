@@ -1,0 +1,68 @@
+# Docker-Compose 版本
+version: "3"
+
+# 定义服务
+services:
+
+  backend:
+
+    # 编译
+    build: ./backend
+
+    # 环境变量
+    environment:
+      - TZ=Asia/Shanghai
+
+    # 依赖关系
+    depends_on:
+      - db
+
+    # 主机数据卷挂载到容器
+    volumes:
+      - ./ops/data/uvicorn:/data
+
+    # 环境变量文件
+    env_file:
+      - ./backend/.env
+
+    # 加入网络
+    networks:
+      - default
+
+  frontend:
+
+    build: ./frontend
+
+    depends_on:
+      - backend
+
+    ports:
+      - 80:80
+      - 443:443
+
+    volumes:
+      - ./ops/data/nginx:/data
+
+    networks:
+      - default
+
+    # network_mode: host
+
+  db:
+
+    build: ./ops
+
+    env_file:
+      - ./ops/.env
+
+    # 数据
+    # volumes:
+    #   - ./ops/data/db:/var/lib/mysql
+
+    networks:
+      - default
+
+# 定义网络
+networks:
+  default:
+    driver: bridge

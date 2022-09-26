@@ -1,0 +1,28 @@
+{
+  "name": "frontend",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "serve": "vue-cli-service serve",
+    "build": "vue-cli-service build"
+  },
+  "dependencies": {
+    "@vicons/ionicons5": "^0.11.0",
+    "@vue/cli": "^5.0.4",
+    "axios": "^0.21.4",
+    "highlight.js": "^11.6.0",
+    "marked": "^4.0.18",
+    "naive-ui": "^2.32.2",
+    "vue": "^3.2.36",
+    "vue-router": "^4.0.15",
+    "vuex": "^4.0.2"
+  },
+  "devDependencies": {
+    "@vue/cli-service": "^5.0.4",
+    "@vue/compiler-sfc": "^3.2.36"
+  },
+  "browserslist": [
+    "Edge > 100",
+    "Chrome > 100"
+  ]
+}

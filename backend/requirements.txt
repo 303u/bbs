@@ -1,0 +1,10 @@
+pyjwt
+uvicorn
+fastapi
+yagmail
+pymysql
+pydantic
+sqlalchemy
+email-validator
+python-multipart
+python-jose[cryptography]
