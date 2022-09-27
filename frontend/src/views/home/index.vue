@@ -1,24 +1,7 @@
 <template>
-    <n-space vertical id="background">
+    <n-space vertical>
         <!-- banner 横幅 -->
-        <n-carousel draggable autoplay style="height: 13em">
-            <n-card style="height: 13em" :key="li" v-for="li of banner">
-                <template #header>{{ li.title }}</template>
-                <template #header-extra>
-                    <n-button circle @click="open(li.url)">
-                        <template #icon>
-                            <n-icon><Link /></n-icon>
-                        </template>
-                    </n-button>
-                </template>
-                <n-skeleton text width="70%" v-if="li.body == ''" />
-                <n-skeleton text :repeat="3" v-if="li.body == ''" />
-                <n-ellipsis v-else :line-clamp="4" :tooltip="false">
-                    {{ li.body }}
-                </n-ellipsis>
-            </n-card>
-        </n-carousel>
-
+        <Banner />
         <n-list bordered>
             <!-- 搜索与刷新栏 -->
             <template #header>
@@ -56,7 +39,9 @@
                 <n-thing>
                     <!-- 头像 -->
                     <template #avatar>
-                        <popup-card :id="li.author" />
+                        <div @mouseover="hover = 1" @mouseout="hover = 0">
+                            <popup-card :id="li.author" />
+                        </div>
                     </template>
                     <!-- 标题 -->
                     <template #header>
@@ -95,6 +80,7 @@
 import axios from "axios";
 import { Link, Search, Reload } from "@vicons/ionicons5";
 import PopupCard from "@/components/PopupCard.vue";
+import Banner from "@/components/Banner.vue";
 
 export default {
     name: "home",
@@ -111,15 +97,12 @@ export default {
         //     this.banner = req.data;
         // });
         return {
-            banner: [
-                { title: "声明", body: "", url: "" },
-                { title: "公告", body: "", url: "" },
-            ],
             data: [],
             list: [],
             lock: 0,
             page: 1,
             size: 5,
+            hover: false,
             key_words: "",
             input_words: "",
         };
@@ -161,40 +144,12 @@ export default {
             this.list = this.data.slice((page - 1) * 5, page * 5);
         },
         goto(item) {
-            this.$router.push("/item/" + item.id);
+            if (!this.hover) this.$router.push("/item/" + item.id);
         },
         open(url) {
             window.open(url);
         },
     },
-    components: { Link, Search, Reload, PopupCard },
+    components: { Link, Search, Reload, PopupCard, Banner },
 };
 </script>
-
-<style scoped>
-/* #background {
-    z-index: 15;
-}
-#background::after {
-    top: 0;
-    z-index: -1;
-    content: "";
-    display: block;
-    position: absolute;
-    transform: rotate(45deg);
-    width: 100vw;
-    height: 100vw;
-    background: #59f5;
-}
-#background::before {
-    top: 0;
-    z-index: -1;
-    content: "";
-    display: block;
-    position: absolute;
-    transform: rotate(10deg);
-    width: 100vw;
-    height: 100vw;
-    background: #59f3;
-} */
-</style>

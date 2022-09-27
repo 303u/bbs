@@ -12,11 +12,12 @@ router = APIRouter(
 
 @router.get("/{item_id}", response_model=list[schemas.TalkOut])
 async def select(
-    item_id: str, db: Session = Depends(get_db),
+    item_id: str, o: int = 0, db: Session = Depends(get_db),
     _: models.Users = Depends(check_user),
 ) -> list[schemas.TalkOut]:
     """查询评论"""
-    return db.query(models.Talks).filter(models.Talks.item == item_id).all()
+    return db.query(models.Talks).filter(
+        models.Talks.item == item_id).offset(o*40).limit(40).all()
 
 
 @router.post("/", response_model=schemas.Msg)
@@ -25,7 +26,7 @@ async def insert(
     user: models.Users = Depends(check_user),
 ) -> schemas.Msg:
     """新建评论"""
-    talk = db.query(models.Items).filter(models.Items.id==user_in.item)
+    talk = db.query(models.Items).filter(models.Items.id == user_in.item)
     if not talk.first():
         raise HTTPException(404, "项目不存在")
     db.add(models.Talks(**user_in.dict(

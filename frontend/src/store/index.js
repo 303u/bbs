@@ -7,6 +7,7 @@ const store = createStore({
     state: {
         user: {},
         history: [],
+        user_info: {},
         theme: window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light",
     },
     getters: {
@@ -31,12 +32,19 @@ const store = createStore({
         },
     },
     mutations: {
-        user(state, take) { state.user = take; },
+        user(state, take) {
+            state.user = take;
+            state.user_info[take.id] = take;
+        },
         clear_history(state) { state.history.length = 0; },
         theme(state) { state.theme = state.theme == "light" ? "dark" : "light" },
         clear_all(state) {
             state.user = {};
+            state.user_info = {};
             state.history.length = 0;;
+        },
+        add_user_info(state, take) {
+            state.user_info[take.id] = take;
         },
         add_history(state, take) {
             // 如果能查到本机历史则删除

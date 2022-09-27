@@ -5,25 +5,7 @@
             <template #header-extra>
                 <n-time :time="Number(data.time || 0)" unix />
             </template>
-            <n-space>
-                <n-tag
-                    round
-                    :key="li"
-                    @click="$router.push({ name: 'search' })"
-                    v-for="li of JSON.parse(data.tag || '[]')"
-                >
-                    <n-ellipsis style="max-width: 230px">
-                        {{ li }}
-                        <template #tooltip>
-                            <div
-                                style="max-width: 230px; word-wrap: break-word"
-                            >
-                                {{ li }}
-                            </div>
-                        </template>
-                    </n-ellipsis>
-                </n-tag>
-            </n-space>
+            <TagList :data="data.tag" />
             <n-divider />
             <div v-html="marked(data.body || '')"></div>
         </n-card>
@@ -31,14 +13,19 @@
         <n-list bordered>
             <template #header>
                 <n-space vertical>
-                    <n-input-group>
-                        <n-input
-                            v-model:value="c.reply"
-                            placeholder="回复"
-                            :disabled="true"
-                        />
-                        <n-button @click="c.reply = null">取消</n-button>
-                    </n-input-group>
+                    <n-card v-if="c.reply">
+                        <template #header>
+                            <n-space>
+                                <PopupCard :id="c.reply" />
+                                <n-text type="info" depth="3" underline>
+                                    @{{ info(c.reply).name }}
+                                </n-text>
+                            </n-space>
+                        </template>
+                        <template #header-extra>
+                            <n-button @click="c.reply = null">取消</n-button>
+                        </template>
+                    </n-card>
                     <n-input
                         clearable
                         show-count
@@ -55,21 +42,24 @@
             <n-list-item :key="li" v-for="li of comment">
                 <n-thing content-indented>
                     <template #avatar>
-                        <n-avatar>
-                            <n-icon>
-                                <PersonCircle />
-                            </n-icon>
-                        </n-avatar>
+                        <PopupCard :id="li.author" />
                     </template>
                     <template #header>
-                        <n-text v-if="li.author == user.id" type="error">
-                            {{ li.author }}
-                        </n-text>
-                        <n-text v-else> {{ li.author }} </n-text>
+                        <n-space>
+                            <n-text>
+                                {{ info(li.author).name }}
+                            </n-text>
+                            <n-tag v-if="data.author == li.author" type="error">
+                                作者
+                            </n-tag>
+                            <n-tag v-else-if="li.author == user.id" type="info">
+                                自己
+                            </n-tag>
+                        </n-space>
                     </template>
                     <template #header-extra v-if="li.reply">
                         <n-text type="info" depth="3" underline>
-                            @{{ li.reply }}
+                            @{{ info(li.reply).name }}
                         </n-text>
                     </template>
                     <template #description>
@@ -105,6 +95,8 @@
 import axios from "axios";
 import { marked } from "marked";
 import { PersonCircle } from "@vicons/ionicons5";
+import PopupCard from "@/components/PopupCard.vue";
+import TagList from "@/components/TagList.vue";
 
 export default {
     data() {
@@ -118,11 +110,11 @@ export default {
             this.comment = req.data;
         });
         return {
-            data: {},
             user: this.$store.state.user,
-            comment: [],
-            marked,
             c: { body: null, reply: null },
+            marked,
+            data: {},
+            comment: [],
         };
     },
     methods: {
@@ -132,6 +124,7 @@ export default {
                     .post("/t/", { ...this.c, item: this.data.id })
                     .then(() => {
                         this.comment_flash();
+                        this.c.body = this.c.reply = "";
                     });
             }
         },
@@ -147,7 +140,10 @@ export default {
                 });
             }
         },
+        info(id) {
+            return this.$store.state.user_info[id] || {};
+        },
     },
-    components: { PersonCircle },
+    components: { PersonCircle, PopupCard, TagList },
 };
 </script>

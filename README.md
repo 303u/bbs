@@ -5,12 +5,13 @@
 1. 编译前端静态文件
 
 `.gitignore` 文件配置了忽略文件夹 `/dist`，
-若直接github下载压缩包则需要更多细节调整。
+部署前需要先编译前端项目生成静态文件。
 
 2. 配置环境变量
 
 `.gitignore` 置了忽略 `.env` 文件防止泄露密码到github，
-`docker-compose.yml` 指向了两个 .env 文件。
+`docker-compose.yml` 指向了两个 `.env` 文件。
+`dev.py` 也指向了 `.env` 文件，在测试和部署时需要留意配置环境变量.
 
 3. 运行
 
@@ -28,8 +29,6 @@ docker compose up -d
 
 | 健        | 值             |
 | --------- | -------------- |
-| title     | 服务器名称     |
-| version   | 服务器版本     |
 | emailh    | 邮箱服务器地址 |
 | emailu    | 邮箱OP3账号    |
 | emailp    | 邮箱OP3对接码  |
@@ -43,6 +42,8 @@ https://docs.sqlalchemy.org/en/14/core/engines.html
 
 简单配置 `alchemy=sqlite://` 不创建数据库可用于本地测试。
 
+若不配置 `digestmod` 则默认为 `digestmod=sha256` 。
+
 > - ### 调试操作：
 1. 安装依赖
 
@@ -50,7 +51,7 @@ https://docs.sqlalchemy.org/en/14/core/engines.html
 pip install -r requirement.txt
 ```
 
-2. 配置环境变量
+2. 配置同级目录下的 `.env` 文件
 
 3. 直接运行 `dev.py`
 

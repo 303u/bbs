@@ -2,8 +2,8 @@
 
 from fastapi import FastAPI
 
-from .core import *
-from .path import *
+from .core import Config
+from .path import Router
 
 # 启动程序
 app = FastAPI(**Config.server)

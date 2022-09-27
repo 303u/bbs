@@ -36,7 +36,6 @@ class Config:
 
     security = {
         # 安全配置
-        # "key": b"backend/security-decode/sha256",
         "key": env("key").encode("utf8"),
         "digestmod": env("digestmod") or "sha256",
     }

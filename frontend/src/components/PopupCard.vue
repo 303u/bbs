@@ -1,5 +1,5 @@
 <template>
-    <n-avatar @mouseover="over" @mouseout="show = 0"> </n-avatar>
+    <n-avatar @mouseover="this.show = 1" @mouseout="show = 0"> </n-avatar>
     <n-card v-show="show">
         <n-avatar>
             <n-icon> </n-icon>
@@ -15,29 +15,29 @@ import axios from "axios";
 export default {
     name: "PopupCard",
     props: {
-        id: { type: String },
+        id: { type: String, default: "" },
     },
     data() {
+        let info = this.$store.state.user_info[this.id] || {};
+        if (!info.id && this.id) {
+            axios.get("/u/" + this.id).then((re) => {
+                this.user = re.data;
+                this.$store.commit("add_user_info", re.data);
+            });
+        }
         return {
-            user: {},
+            user: info,
             show: false,
         };
     },
-    methods: {
-        over() {
-            if (!this.user.name) {
-                axios.get("/u/" + this.id).then((re) => (this.user = re.data));
-            }
-            this.show = 1;
-        },
-    },
+    methods: {},
 };
 </script>
 
 <style scoped>
 .n-card {
-    z-index: 0;
-    width: 300px;
+    z-index: 10;
+    width: 270px;
     overflow: hidden;
     position: absolute;
 }
@@ -48,8 +48,8 @@ export default {
     display: block;
     position: absolute;
     transform: rotate(45deg);
-    width: 100vw;
-    height: 100vw;
+    width: 700px;
+    height: 700px;
     background: #59f5;
 }
 .n-card::before {
@@ -59,8 +59,8 @@ export default {
     display: block;
     position: absolute;
     transform: rotate(10deg);
-    width: 100vw;
-    height: 100vw;
+    width: 700px;
+    height: 700px;
     background: #59f3;
 }
 </style>
