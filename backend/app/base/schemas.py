@@ -19,9 +19,9 @@ class VerifyCode(Msg):
 # 用户系列
 class UserIn(BaseModel):
     """用户模型输入"""
-    name: str = Field(None, min_length=2, max_length=16)
-    email: str = Field(None, regex=r"\w{4,32}\@\w+\.\w+")
-    password: str = Field(None, min_length=8, max_length=16)
+    name: str = Field(None, min_length=1, max_length=20)
+    email: str = Field(None, regex=r"\w{2,32}\@\w+\.\w+", max_length=64)
+    password: str = Field(None, min_length=6, max_length=24)
 
 
 class UserOut(BaseModel):
@@ -47,7 +47,7 @@ class ItemIn(BaseModel):
     """用户项目输入"""
     title: str = Field(..., min_length=1, max_length=32)
     tag: str = Field(None, max_length=128)
-    body: str = Field(None, max_length=32000)
+    body: str = Field(None, max_length=6500)
 
 
 class ItemOut(BaseModel):
@@ -71,9 +71,9 @@ class ItemFull(ItemOut):
 # 评论系列
 class TalksIn(BaseModel):
     """评论模型输入"""
-    body: str = Field(..., min_length=1, max_length=128)
-    item: str = Field(..., min_length=13, max_length=17)
-    reply: str = Field(None, min_length=2, max_length=16)
+    body: str = Field(..., min_length=1, max_length=300)
+    item: str = Field(..., min_length=16, max_length=16)
+    reply: str = Field(None, max_length=16)
 
 
 class TalkOut(BaseModel):

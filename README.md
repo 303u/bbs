@@ -32,7 +32,6 @@ docker compose up -d
 | emailh    | 邮箱服务器地址 |
 | emailu    | 邮箱OP3账号    |
 | emailp    | 邮箱OP3对接码  |
-| emailp    | 邮箱OP3对接码  |
 | alchemy   | ORM的对接方式  |
 | key       | 加密盐         |
 | digestmod | 加密模式       |

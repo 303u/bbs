@@ -1,9 +1,6 @@
 <template>
-    <n-config-provider
-        :theme="$store.getters.theme"
-        :locale="$store.getters.locale"
-        :date-locale="$store.getters.locale_d"
-    >
+    <n-config-provider :theme="$store.getters.theme" :locale="$store.getters.locale"
+        :date-locale="$store.getters.locale_d">
         <n-dialog-provider>
             <n-message-provider>
                 <n-loading-bar-provider>

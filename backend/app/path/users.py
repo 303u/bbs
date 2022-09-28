@@ -67,7 +67,10 @@ async def cancel_user(
     user: models.Users = Depends(check_user),
 ) -> schemas.Msg:
     """申请注销账号"""
-    db.query(models.Items).filter_by(author=user.id).delete()
+    for item in db.query(models.Items).filter_by(author=user.id).all():
+        item: models.Items
+        db.query(models.Talks).filter(models.Talks.item == item.id).delete()
+        db.delete(item)
     db.query(models.Talks).filter_by(author=user.id).delete()
     db.delete(user)
     db.commit()

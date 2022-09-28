@@ -13,7 +13,7 @@ router = APIRouter(
 
 @router.get("/", response_model=list[schemas.ItemOut])
 async def get_items(
-    o: int = 0, me: bool = False,
+    skip: int = 0, me: bool = False,
     db: Session = Depends(get_db),
     user: models.Users = Depends(check_user),
 ) -> list[schemas.ItemOut]:
@@ -23,7 +23,7 @@ async def get_items(
         items = items.filter(models.Items.author == user.id)
     else:
         items = items.filter(models.Items.author != user.id)
-    return items.offset(o*40).limit(40).all()
+    return items.offset(skip*40).limit(40).all()
 
 
 @router.get("/{item_id}", response_model=schemas.ItemOut)
@@ -89,7 +89,7 @@ async def delete_item(
 
 @router.get("/t/{key_words}", response_model=list[schemas.ItemOut])
 async def take_item(
-    key_words: str, o: int = 0,
+    key_words: str, skip: int = 0,
     db: Session = Depends(get_db),
     _: models.Users = Depends(check_user),
 ) -> list[schemas.ItemOut]:
@@ -97,4 +97,4 @@ async def take_item(
     title = [models.Items.title.like(f"%{w}%") for w in key_words.split(" ")]
     tag = [models.Items.tag.like(f"%{w}%") for w in key_words.split(" ")]
     return db.query(models.Items).filter(models.Items.ban == False).filter(
-        or_(and_(*title), and_(*tag))).offset(o*40).limit(40).all()
+        or_(and_(*title), and_(*tag))).offset(skip*40).limit(40).all()

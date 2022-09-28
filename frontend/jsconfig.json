@@ -2,8 +2,10 @@
     "compilerOptions": {
         "emitDecoratorMetadata": true,
         "experimentalDecorators": true,
+        "noImplicitAny": false,
         "checkJs": false,
         "strict": true,
+        "jsx": "preserve",
         "module": "commonjs",
         "target": "es6",
         "baseUrl": ".",
@@ -11,10 +13,17 @@
             "@/*": [
                 "src/*",
             ],
-        }
+        },
+        "lib": [
+            "ES6",
+            "DOM",
+            "DOM.Iterable",
+            "ES2022",
+        ]
     },
     "exclude": [
         "node_modules",
+        "dist",
     ],
     "include": [
         "src/**/*",

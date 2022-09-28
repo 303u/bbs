@@ -1,14 +1,16 @@
 import { createStore } from 'vuex';
 import { darkTheme, zhCN, enUS, ruRU, dateZhCN, dateRuRU, dateEnUS } from 'naive-ui';
 
-(lang => document.lang = lang)(navigator.language.slice(0, 2));
+let lang = navigator.language.slice(0, 2);
+let theme = window.matchMedia("(prefers-color-scheme: dark)").matches;
+(lang => document.lang = lang)(lang);
 
 const store = createStore({
     state: {
         user: {},
         history: [],
         user_info: {},
-        theme: window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light",
+        theme: theme ? "dark" : "light",
     },
     getters: {
         theme(state) {
@@ -43,7 +45,7 @@ const store = createStore({
             state.user_info = {};
             state.history.length = 0;;
         },
-        add_user_info(state, take) {
+        insert_info(state, take) {
             state.user_info[take.id] = take;
         },
         add_history(state, take) {

@@ -12,12 +12,12 @@ router = APIRouter(
 
 @router.get("/{item_id}", response_model=list[schemas.TalkOut])
 async def select(
-    item_id: str, o: int = 0, db: Session = Depends(get_db),
+    item_id: str, skip: int = 0, db: Session = Depends(get_db),
     _: models.Users = Depends(check_user),
 ) -> list[schemas.TalkOut]:
     """查询评论"""
     return db.query(models.Talks).filter(
-        models.Talks.item == item_id).offset(o*40).limit(40).all()
+        models.Talks.item == item_id).offset(skip*40).limit(40).all()
 
 
 @router.post("/", response_model=schemas.Msg)
