@@ -6,30 +6,30 @@ from ..core.dependence import Session, get_db, check_user
 
 router = APIRouter(
     prefix="/t",
-    tags=["talks"],
+    tags=["comment"],
 )
 
 
-@router.get("/{item_id}", response_model=list[schemas.TalkOut])
+@router.get("/{item_id}", response_model=list[schemas.CommentOut])
 async def select(
     item_id: str, skip: int = 0, db: Session = Depends(get_db),
     _: models.Users = Depends(check_user),
-) -> list[schemas.TalkOut]:
+) -> list[schemas.CommentOut]:
     """查询评论"""
-    return db.query(models.Talks).filter(
-        models.Talks.item == item_id).offset(skip*40).limit(40).all()
+    return db.query(models.Comment).filter(
+        models.Comment.item == item_id).offset(skip*40).limit(40).all()
 
 
 @router.post("/", response_model=schemas.Msg)
 async def insert(
-    user_in: schemas.TalksIn, db: Session = Depends(get_db),
+    user_in: schemas.CommentIn, db: Session = Depends(get_db),
     user: models.Users = Depends(check_user),
 ) -> schemas.Msg:
     """新建评论"""
     talk = db.query(models.Items).filter(models.Items.id == user_in.item)
     if not talk.first():
         raise HTTPException(404, "项目不存在")
-    db.add(models.Talks(**user_in.dict(
+    db.add(models.Comment(**user_in.dict(
         exclude_defaults=True), author=user.id))
     db.commit()
     return {"detail": "操作成功"}
@@ -41,8 +41,8 @@ async def delete(
     user: models.Users = Depends(check_user),
 ) -> schemas.Msg:
     """通过id删除评论"""
-    talk: models.Talks | None = db.query(models.Talks).filter(
-        models.Talks.id == talk_id).first()
+    talk: models.Comment | None = db.query(models.Comment).filter(
+        models.Comment.id == talk_id).first()
     if not talk:
         raise HTTPException(404, "项目不存在")
     elif not talk.author == user.id:

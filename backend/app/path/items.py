@@ -81,7 +81,7 @@ async def delete_item(
     """通过id删除项目"""
     if item.author != user.id:
         raise HTTPException(400, "权限不足")
-    db.query(models.Talks).filter(models.Talks.item == item.id).delete()
+    db.query(models.Comment).filter(models.Comment.item == item.id).delete()
     db.delete(item)
     db.commit()
     return {"detail": "操作成功"}

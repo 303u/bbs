@@ -10,18 +10,6 @@
           <template #header>
             <n-space>
               <PopupCard :id="data.author" />
-              <n-popover trigger="hover">
-                <template #trigger>
-                  <n-button secondary circle type="error">
-                    <template #icon>
-                      <n-icon>
-                        <PersonCircle />
-                      </n-icon>
-                    </template>
-                  </n-button>
-                </template>
-                <n-text>作者</n-text>
-              </n-popover>
             </n-space>
           </template>
           <template #header-extra>
@@ -30,7 +18,7 @@
         </n-card>
 
         <!-- tag标签 -->
-        <TagList :data="data.tag" />
+        <TagList :data="data.tag || ''" />
       </n-space>
     </n-card>
 
@@ -131,7 +119,6 @@
                 删除
               </n-button>
             </n-space>
-            <!-- TODO: 举报 -->
           </template>
         </n-thing>
       </n-list-item>
@@ -152,12 +139,15 @@ export default {
   data() {
     axios.get("/i/" + this.$route.params.id).then((req) => {
       this.data = req.data;
-      // 历史浏览
+      // 加入历史浏览
       this.$store.commit("add_history", req.data);
-    });
-    axios.get("/t/" + this.$route.params.id).then((req) => {
-      // 获取评论
-      this.comment = req.data;
+      axios.get("/t/" + this.$route.params.id).then((req) => {
+        // 获取评论
+        this.comment = req.data;
+      });
+    }).catch(() => {
+      // 项目不存在则返回页面
+      this.$router.back()
     });
     return {
       user: this.$store.state.user,
@@ -191,6 +181,26 @@ export default {
         });
       }
     },
+  },
+  // 捕捉路由参数变化
+  watch: {
+    $route() {
+      // 如果跳出页面则不执行信息抓取
+      if (this.$route.params.id) {
+        axios.get("/i/" + this.$route.params.id).then((req) => {
+          this.data = req.data;
+          // 加入历史浏览
+          this.$store.commit("add_history", req.data);
+          axios.get("/t/" + this.$route.params.id).then((req) => {
+            // 获取评论
+            this.comment = req.data;
+          });
+        }).catch(() => {
+          // 项目不存在则返回页面
+          this.$router.back()
+        });
+      }
+    }
   },
   components: { PersonCircle, PopupCard, TagList },
 };

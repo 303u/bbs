@@ -1,9 +1,10 @@
 <template>
-  <n-list>
-    <n-card>
-      <n-collapse default-expanded-names="A" accordion>
-        <n-collapse-item title="修改信息" name="A">
-          <n-card style="max-width: 360px">
+  <n-grid cols="12" item-responsive responsive="self">
+    <!-- 信息修改 -->
+    <n-grid-item span="12 700:6 1200:4">
+      <n-card>
+        <n-collapse default-expanded-names="user_info" accordion>
+          <n-collapse-item title="修改信息" name="user_info">
             <n-form :model="u" :rules="rules">
               <n-form-item-row>
                 <n-checkbox v-model:checked="a.n"> 名称 </n-checkbox>
@@ -35,11 +36,9 @@
               </n-collapse-transition>
               <n-button block type="primary" @click="change"> 提交 </n-button>
             </n-form>
-          </n-card>
-        </n-collapse-item>
+          </n-collapse-item>
 
-        <n-collapse-item title="注销账号">
-          <n-card style="max-width: 360px">
+          <n-collapse-item title="注销账号">
             <n-space vertical>
               <n-steps vertical :current="current" :status="'process'">
                 <n-step title="确认文件"></n-step>
@@ -50,12 +49,8 @@
 
               <n-space vertical v-if="current == 1">
                 <n-collapse accordion>
-                  <n-collapse-item title="账户相关">
-                    注销账号的信息无法恢复
-                  </n-collapse-item>
-                  <n-collapse-item title="数据处理">
-                    评论与项目会按删除处理
-                  </n-collapse-item>
+                  <n-collapse-item title="账户相关"></n-collapse-item>
+                  <n-collapse-item title="数据处理"></n-collapse-item>
                 </n-collapse>
                 <n-divider />
                 <n-button block @click="current = 2">
@@ -76,16 +71,47 @@
               <n-space vertical v-if="current == 3">
                 <n-result status="success" title="成功">
                   <template #footer>
-                    已完成注销操作，将在三秒左右自动退出账号。
+                    已完成注销操作，将自动退出账号。
+                    <n-countdown :duration="3000" :active="current == 3" />
                   </template>
+
                 </n-result>
               </n-space>
             </n-space>
-          </n-card>
-        </n-collapse-item>
-      </n-collapse>
-    </n-card>
-  </n-list>
+          </n-collapse-item>
+        </n-collapse>
+      </n-card>
+    </n-grid-item>
+    <!-- 安全信息展示 -->
+    <n-grid-item span="6 700:3 1200:4">
+      <n-timeline>
+        <n-timeline-item type="success" title="邮箱号绑定" content="已绑定" />
+        <n-timeline-item type="error" title="手机号绑定" content="暂未开放" />
+        <n-timeline-item type="error" title="身份验证" content="暂未开放" />
+        <n-timeline-item type="info" title="信息完善" content="等待完善" line-type="dashed" />
+        <n-timeline-item>暂未开放</n-timeline-item>
+      </n-timeline>
+    </n-grid-item>
+    <!-- 百分比效果 -->
+    <n-grid-item span="6 700:3 1200:4">
+      <n-space justify="center">
+        <n-progress type="dashboard" gap-position="bottom" :percentage="25">
+          <n-statistic tabular-nums>
+            <n-number-animation show-separator :from="0" :to="25" />
+          </n-statistic>
+          <n-text>%</n-text>
+        </n-progress>
+      </n-space>
+      <n-h2 prefix="bar" type="error">请完善信息</n-h2>
+      <n-button block>快速前往</n-button>
+    </n-grid-item>
+    <!-- 日历 -->
+    <n-grid-item span="0 700:12">
+      <n-calendar #="{ year, month, date }">
+        {{ year }}-{{ month }}-{{ date }}
+      </n-calendar>
+    </n-grid-item>
+  </n-grid>
 </template>
 
 <script>
@@ -108,7 +134,7 @@ export default {
           message: "1-20位长度",
           trigger: ["input", "blur"],
           validator(_, val) {
-            return /^.{1,20}$/.test(val);
+            return val.length;
           },
         },
         email: {
@@ -121,10 +147,10 @@ export default {
         },
         password: {
           required: true,
-          message: "6-24位任意字符",
+          message: "最少6位",
           trigger: ["input", "blur"],
           validator(_, val) {
-            return /^\w{6,24}$/.test(val);
+            return val.length > 5;
           },
         },
         token: {
@@ -132,7 +158,7 @@ export default {
           message: "8位长度",
           trigger: ["input", "blur"],
           validator(_, val) {
-            return /^\w{8}$/.test(val);
+            return val.length == 8;
           },
         },
       },
@@ -141,8 +167,11 @@ export default {
   methods: {
     cancel_account() {
       axios.delete("/u/").then(() => {
-        sessionStorage.clear();
         this.current = 3;
+        // 清空用户数据
+        sessionStorage.clear();
+        localStorage.clear();
+        this.$store.commit("clear_all")
         setTimeout(() => {
           this.$router.push("/verify");
         }, 3000);
@@ -157,11 +186,11 @@ export default {
       if (!this.a.n) this.u.name = null;
       if (!this.a.e) this.u.email = null;
       if (!this.a.p) this.u.password = null;
-      if ((this.a.e || this.a.p) && /^\w{8}$/.test(this.u.token)) {
-        if (this.a.n && !/^.{1,20}$/.test(this.u.name)) return;
+      if ((this.a.e || this.a.p) && this.u.token.length == 8) {
+        if (this.a.n && !this.u.name.length) return;
         if (this.a.p && !/^\w{6,24}$/.test(this.u.password)) return;
         if (this.a.e && !/^\w{2,32}\@\w+\.\w+$/.test(this.u.email)) return;
-      } else if (this.a.n && /^.{1,20}$/.test(this.u.name)) {
+      } else if (this.a.n && this.u.name.length) {
       } else return;
       let name = this.u.name;
       axios
@@ -176,3 +205,13 @@ export default {
   },
 };
 </script>
+<style scoped>
+.n-timeline {
+  margin: 15px;
+}
+
+.n-progress,
+.n-calendar {
+  margin-top: 15px;
+}
+</style>

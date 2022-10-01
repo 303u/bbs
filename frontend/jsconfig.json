@@ -14,12 +14,6 @@
                 "src/*",
             ],
         },
-        "lib": [
-            "ES6",
-            "DOM",
-            "DOM.Iterable",
-            "ES2022",
-        ]
     },
     "exclude": [
         "node_modules",

@@ -4,7 +4,7 @@
   <n-popover trigger="hover" :duration="100">
     <template #trigger>
       <!-- 默认外部显示头像 -->
-      <n-avatar>
+      <n-avatar @click="show_user">
         <n-icon> </n-icon>
       </n-avatar>
     </template>

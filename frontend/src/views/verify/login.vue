@@ -1,20 +1,23 @@
 <template>
   <n-form :model="form" :rules="rules" @keyup.enter="submit">
     <n-form-item-row label="邮箱账号" path="username">
-      <n-input clearable v-model:value="form.username" type="email" />
+      <n-input clearable v-model:value="form.username" type="email" maxlength="64" />
     </n-form-item-row>
     <n-form-item-row label="账号密码" path="password">
-      <n-input
-        clearable
-        v-model:value="form.password"
-        type="password"
-        show-password-on="click"
-      />
+      <n-input clearable v-model:value="form.password" type="password" show-password-on="click" maxlength="24" />
     </n-form-item-row>
+    <n-form-item-row label="保持登录">
+      <n-popover trigger="hover">
+        <template #trigger>
+          <n-switch v-model:value="keep" />
+        </template>
+        <n-text>选中可保持七天登录身份</n-text>
+      </n-popover>
+    </n-form-item-row>
+    <n-button type="primary" @click="submit" block>登录</n-button>
     <n-form-item-row label="人机验证" v-if="verify.count > 1" path="verify">
       <n-slider v-model:value="verify.value" :marks="verify.key" range />
     </n-form-item-row>
-    <n-button type="primary" @click="submit" block>登录</n-button>
   </n-form>
 </template>
 
@@ -26,6 +29,7 @@ export default {
     let verify = { value: [0, 0], key: {}, count: 0 };
     return {
       verify,
+      keep: false,
       form: {
         username: "",
         password: "",
@@ -56,7 +60,7 @@ export default {
           message: "6-24位任意字符",
           trigger: ["input", "blur"],
           validator(_, val) {
-            return /^.{6,24}$/.test(val);
+            return val.length > 5;
           },
         },
       },
@@ -67,13 +71,13 @@ export default {
       if (
         // 验证正常登录
         /^\w{2,32}\@\w+\.\w+$/.test(this.form.username) &&
-        /^.{6,24}$/.test(this.form.password) &&
+        this.form.password.length > 5 &&
         !(this.verify.count > 1)
       ) {
       } else if (
         // 验证验证码登录
         /^\w{2,32}\@\w+\.\w+$/.test(this.form.username) &&
-        /^.{6,24}$/.test(this.form.password) &&
+        this.form.password.length > 5 &&
         this.verify.value[0] in this.verify.key &&
         this.verify.value[1] in this.verify.key &&
         this.verify.value[0] != this.verify.value[1]
@@ -100,7 +104,8 @@ export default {
       axios
         .post("/l/", form)
         .then((req) => {
-          sessionStorage.token = req.data.access_token;
+          // 保存身份token
+          (this.keep ? localStorage : sessionStorage).token = req.data.access_token;
           this.$router.push("/");
         })
         .catch(() => {

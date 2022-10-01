@@ -1,18 +1,13 @@
 <template>
   <n-form :model="u" :rules="rules">
     <n-form-item-row label="邮箱账号" path="email">
-      <n-input clearable type="email" v-model:value="u.email" />
+      <n-input clearable type="email" v-model:value="u.email" maxlength="64" />
     </n-form-item-row>
     <n-form-item-row label="账号密码" path="password">
-      <n-input
-        clearable
-        type="password"
-        show-password-on="click"
-        v-model:value="u.password"
-      />
+      <n-input clearable type="password" show-password-on="click" v-model:value="u.password" maxlength="24" />
     </n-form-item-row>
     <n-form-item-row label="使用名称" path="name">
-      <n-input clearable v-model:value="u.name" />
+      <n-input clearable v-model:value="u.name" maxlength="20" />
     </n-form-item-row>
     <n-button block type="primary" @click="register">注册</n-button>
   </n-form>
@@ -27,10 +22,10 @@ export default {
       rules: {
         name: {
           required: true,
-          message: "1-16位长度",
+          message: "1-20位长度",
           trigger: ["input", "blur"],
           validator(_, val) {
-            return /^.{1,20}$/.test(val);
+            return val.length > 0;
           },
         },
         email: {
@@ -46,7 +41,7 @@ export default {
           message: "6-24位任意字符",
           trigger: ["input", "blur"],
           validator(_, val) {
-            return /^.{6,24}$/.test(val);
+            return val.length > 5;
           },
         },
       },
@@ -55,11 +50,13 @@ export default {
   methods: {
     register() {
       if (
-        /^.{1,20}$/.test(this.u.name) &&
+        this.u.name.length > 0 &&
         /^\w{2,32}\@\w+\.\w+$/.test(this.u.email) &&
-        /^.{6,24}$/.test(this.u.password)
+        this.u.password.length > 5
       ) {
-        axios.post("/u/", this.u);
+        axios.post("/u/", this.u).then(() => {
+          this.$router.push({ name: "login" })
+        });
       }
     },
   },

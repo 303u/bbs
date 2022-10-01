@@ -4,7 +4,7 @@ from sqlalchemy.exc import SQLAlchemyError
 
 from ..base import models, schemas
 from ..utils import new_account, get_code_email
-from ..core.security import hasher, verification, verify_token
+from ..core.security import hasher, token, verify_token
 from ..core.dependence import Session, get_db, check_user
 
 
@@ -28,17 +28,25 @@ async def create_user(
     db: Session = Depends(get_db),
 ) -> schemas.Msg:
     """创建新用户"""
-    if db.query(models.Users).filter_by(email=data.email).first():
+    if db.query(models.Users).filter(models.Users.email==data.email).first():
         raise HTTPException(400, "请更换邮箱")
     data.password = hasher(data.password)
 
     try:
-        db.add(models.Users(**data.dict()))
+        user = models.Users(**data.dict())
+        db.add(user)
         db.commit()
+        # 刷新用户信息
+        db.refresh(user)
     except SQLAlchemyError:
         return {"detail": "请重试"}
 
-    new_account(data.email, data.name)
+    # TODO 校验邮箱 绑定更多用户信息到其他表
+    try:
+        new_account(data.email, data.name)
+    except Exception:
+        db.delete(user)
+
     return {"detail": "创建成功"}
 
 
@@ -56,7 +64,7 @@ async def update_user(
             raise HTTPException(400, "验证码无效或失效")
     data.password = hasher(data.password)
     data = data.dict(exclude_defaults=True) | {"info": None}
-    db.query(models.Users).filter_by(id=user.id).update(data)
+    db.query(models.Users).filter(models.Users.id == user.id).update(data)
     db.commit()
     return {"detail": "操作成功"}
 
@@ -67,11 +75,14 @@ async def cancel_user(
     user: models.Users = Depends(check_user),
 ) -> schemas.Msg:
     """申请注销账号"""
-    for item in db.query(models.Items).filter_by(author=user.id).all():
+    for item in db.query(models.Items).filter(
+            models.Items.author == user.id).all():
         item: models.Items
-        db.query(models.Talks).filter(models.Talks.item == item.id).delete()
+        db.query(models.Comment).filter(
+            models.Comment.item == item.id).delete()
         db.delete(item)
-    db.query(models.Talks).filter_by(author=user.id).delete()
+    db.query(models.Comment).filter(
+        models.Items.author == user.id).delete()
     db.delete(user)
     db.commit()
     return {"detail": "操作成功"}
@@ -83,8 +94,8 @@ async def get_code(
 ) -> schemas.VerifyCode:
     """获取验证码"""
     code = token_hex(4)
-    get_code_email(user.email, "验证码", code)
-    return {"detail": "请检查邮件", "code": verification(user.id, code)}
+    get_code_email(user.email, code)
+    return {"detail": "请检查邮件", "code": token(user.id, code, 0.1)}
 
 
 @router.get("/{user_id}", response_model=schemas.UserOut)

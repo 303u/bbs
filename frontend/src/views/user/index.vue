@@ -13,21 +13,8 @@
           </n-icon>
         </n-avatar>
       </template>
-      <n-space>
-        <n-button @click="c(0)" text>
-          <n-text :type="$route.name == 'user' ? 'success' : ''"> 主页 </n-text>
-        </n-button>
-        <n-button @click="c(1)" text>
-          <n-text :type="$route.name == 'history' ? 'success' : ''">
-            历史
-          </n-text>
-        </n-button>
-        <n-button @click="c(2)" text>
-          <n-text :type="$route.name == 'security' ? 'success' : ''">
-            安全
-          </n-text>
-        </n-button>
-      </n-space>
+      <!-- 菜单栏 -->
+      <n-menu :value="$route.name" mode="horizontal" :options="menuBar" @update:value="menuValue" />
     </n-card>
 
     <!-- 保存状态 在调试情况下会导致热重载报错 -->
@@ -36,36 +23,26 @@
         <component :is="Component" />
       </keep-alive>
     </router-view> -->
-
-    <n-grid cols="12" item-responsive responsive="self">
-      <n-grid-item span="12 700:3 1400:2">
-        <n-menu :options="menuBar" :default-value="$route.name" :value="$route.name"/>
-      </n-grid-item>
-      <n-grid-item span="12 700:9 1400:10">
-        <router-view></router-view>
-      </n-grid-item>
-    </n-grid>
+    <router-view></router-view>
   </n-space>
 </template>
 
 <script>
 // 菜单栏
-const menuBar = [
-  { label: "主页", key: "user" },
-  { label: "历史", key: "history" },
-  { label: "安全", key: "security" },
-];
 import { PersonCircle } from "@vicons/ionicons5";
 export default {
   data() {
     return {
-      menuBar,
+      menuBar: [
+        { label: "主页", key: "user", },
+        { label: "安全", key: "security", }
+      ],
     };
   },
   methods: {
-    c(page) {
-      this.page = page;
-      this.$router.push({ name: ["user", "history", "security"][page] });
+    menuValue(key) {
+      // 导航跳转路径
+      this.$router.push({ name: key });
     },
   },
   components: { PersonCircle },
@@ -73,18 +50,15 @@ export default {
 </script>
 
 <style scoped>
-.n-card#user {
+#user {
+  z-index: 0;
+  overflow: hidden;
   background: linear-gradient(45deg,
       rgba(0, 130, 255, 0.25) 0%,
       rgba(0, 170, 255, 0.75) 100%);
-  overflow: hidden;
 }
 
-.n-card#user {
-  z-index: 0;
-}
-
-.n-card#user::after {
+#user::after {
   top: 0;
   z-index: -10;
   content: "";
@@ -97,7 +71,7 @@ export default {
   animation: aftera 6s linear infinite;
 }
 
-.n-card#user::before {
+#user::before {
   top: 0;
   z-index: -10;
   content: "";

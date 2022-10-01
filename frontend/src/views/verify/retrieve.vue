@@ -1,17 +1,12 @@
 <template>
   <n-form :model="u" :rules="rules">
     <n-form-item-row label="邮箱账号" path="email">
-      <n-input clearable v-model:value="u.email" />
+      <n-input clearable v-model:value="u.email" maxlength="20" />
     </n-form-item-row>
     <n-form-item-row label="新密码" path="password">
-      <n-input
-        clearable
-        type="password"
-        show-password-on="click"
-        v-model:value="u.password"
-      />
+      <n-input clearable type="password" show-password-on="click" v-model:value="u.password" maxlength="24" />
     </n-form-item-row>
-    <n-form-item-row label="验证码" path="token">
+    <n-form-item-row label="验证码" path="token" maxlength="8">
       <n-input-group>
         <n-input clearable v-model:value="u.token" />
         <n-button @click="recovery" :disabled="!u.email">获取</n-button>
@@ -47,7 +42,7 @@ export default {
           message: "6-24位任意字符",
           trigger: ["input", "blur"],
           validator(_, val) {
-            return /^.{6,24}$/.test(val);
+            return val.length > 5;
           },
         },
         token: {
@@ -55,7 +50,7 @@ export default {
           message: "8位长度",
           trigger: ["input", "blur"],
           validator(_, val) {
-            return /^\w{8}$/.test(val);
+            return val.length == 8;
           },
         },
       },
@@ -71,12 +66,14 @@ export default {
     },
     submit() {
       if (
-        /^\w{8}$/.test(this.u.token) &&
+        this.u.token.length == 8 &&
         /^\w{2,32}\@\w+\.\w+$/.test(this.u.email) &&
-        /^.{6,24}$/.test(this.u.password)
+        this.u.password.length > 5
       ) {
         axios.post("/l/t/" + this.u.token, this.u, {
           headers: { code: this.code },
+        }).then(() => {
+          this.$router.push({ name: "login" })
         });
       }
     },

@@ -13,7 +13,7 @@
 `docker-compose.yml` 指向了两个 `.env` 文件。
 `dev.py` 也指向了 `.env` 文件，在测试和部署时需要留意配置环境变量.
 
-3. 运行
+3. 执行
 
 ```bash
 docker compose up -d
@@ -36,10 +36,11 @@ docker compose up -d
 | key       | 加密盐         |
 | digestmod | 加密模式       |
 
-查看 alchemy 配置的写法：
-https://docs.sqlalchemy.org/en/14/core/engines.html
+alchemy 配置的写法：https://docs.sqlalchemy.org/en/14/core/engines.html
 
 简单配置 `alchemy=sqlite://` 不创建数据库可用于本地测试。
+
+此项目默认 `alchemy=mysql+pymysql://用户名:密码@db:3306/数据库名`
 
 若不配置 `digestmod` 则默认为 `digestmod=sha256` 。
 

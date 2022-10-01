@@ -45,7 +45,7 @@ class UserFull(UserOut):
 # 数据系列
 class ItemIn(BaseModel):
     """用户项目输入"""
-    title: str = Field(..., min_length=1, max_length=32)
+    title: str = Field(..., min_length=1, max_length=64)
     tag: str = Field(None, max_length=128)
     body: str = Field(None, max_length=6500)
 
@@ -69,14 +69,14 @@ class ItemFull(ItemOut):
 
 
 # 评论系列
-class TalksIn(BaseModel):
+class CommentIn(BaseModel):
     """评论模型输入"""
     body: str = Field(..., min_length=1, max_length=300)
     item: str = Field(..., min_length=16, max_length=16)
     reply: str = Field(None, max_length=16)
 
 
-class TalkOut(BaseModel):
+class CommentOut(BaseModel):
     """评论模型输出"""
     id: str = None
     item: str = None

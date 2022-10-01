@@ -50,9 +50,9 @@ class Items(Base):
     time: Column
 
 
-class Talks(Base):
+class Comment(Base):
     __table__ = Table(
-        "talk",
+        "Comment",
         Base.metadata,
         Column("id", CHAR(16), primary_key=1, index=1, default=create_id),
         Column("item", CHAR(16), nullable=0, index=1),

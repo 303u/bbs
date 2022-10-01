@@ -43,7 +43,7 @@ async def delete_user(
     _: models.Users = Depends(check_admin),
 ) -> schemas.Msg:
     """通过id删除用户"""
-    db.query(models.Talks).filter(models.Users.id==user_id).delete()
+    db.query(models.Comment).filter(models.Users.id==user_id).delete()
     db.commit()
     return {"detail": "操作成功"}
 
@@ -81,13 +81,13 @@ async def delete_item(
     return {"detail": "操作成功"}
 
 
-@router.get("/t/", response_model=list[schemas.TalkOut])
+@router.get("/t/", response_model=list[schemas.CommentOut])
 async def read_talks(
     skip: int = 0, db: Session = Depends(get_db),
     _: models.Users = Depends(check_admin),
-) -> list[schemas.TalkOut]:
+) -> list[schemas.CommentOut]:
     """检索所有评论"""
-    return db.query(models.Talks).offset(skip*40).limit(40).all()
+    return db.query(models.Comment).offset(skip*40).limit(40).all()
 
 
 @router.delete("/t/{talk_id}", response_model=schemas.Msg)
@@ -96,6 +96,6 @@ async def delete_talk(
     _: models.Users = Depends(check_admin),
 ) -> schemas.Msg:
     """通过id删除评论"""
-    db.query(models.Talks).filter(models.Talks.id==talk_id).delete()
+    db.query(models.Comment).filter(models.Comment.id==talk_id).delete()
     db.commit()
     return {"detail": "操作成功"}

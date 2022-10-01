@@ -1,7 +1,7 @@
 <template>
   <n-space vertical>
     <!-- banner 横幅 -->
-    <Banner />
+    <BannerVue />
 
     <!-- 文章与部分评论 -->
     <n-grid cols="10" item-responsive responsive="self">
@@ -13,23 +13,23 @@
               <n-input-group>
                 <n-button tertiary type="info" @click="get_data">
                   <template #icon>
-                    <n-icon><Reload /></n-icon>
+                    <n-icon>
+                      <Reload />
+                    </n-icon>
                   </template>
                 </n-button>
-                <n-input
-                  clearable
-                  v-model:value="input_words"
-                  @keyup.enter="select"
-                />
-                <n-button tertiary type="primary" @click="select">
+                <n-input clearable v-model:value="input_words" @keyup.enter="on_search" />
+                <n-button tertiary type="primary" @click="on_search">
                   <template #icon>
-                    <n-icon><Search /></n-icon>
+                    <n-icon>
+                      <Search />
+                    </n-icon>
                   </template>
                 </n-button>
               </n-input-group>
               <!-- 关键字展示 -->
               <n-space>
-                <div :key="li" v-for="li of key_words.split(' ')">
+                <div :key="li" v-for="li of keywords.split(' ')">
                   <n-tag round v-if="li" size="large">
                     {{ li }}
                   </n-tag>
@@ -44,14 +44,15 @@
               <!-- 头像 -->
               <template #avatar>
                 <div @mouseover="hover = 1" @mouseout="hover = 0">
-                  <popup-card :id="li.author" />
+                  <PopupCardVue :id="li.author" />
                 </div>
               </template>
               <!-- 标题 -->
               <template #header>
                 {{ li.title }}
               </template>
-              <!-- <template #description> {{ li.author }} </template> -->
+              <!-- 详情栏 -->
+              <!-- <template #description></template> -->
               <!-- 内容 -->
               <template #footer>
                 <n-ellipsis :line-clamp="2" :tooltip="false">
@@ -67,37 +68,37 @@
           <!-- 翻页控件 -->
           <template #footer>
             <n-space justify="center">
-              <n-pagination
-                :page-slot="5"
-                v-model:page="page"
-                :on-update:page="on_show"
-                v-model:page-size="size"
-                :item-count="data.length"
-              />
+              <n-pagination :page-slot="5" v-model:page="page" :on-update:page="on_show" v-model:page-size="size"
+                :item-count="data.length" />
             </n-space>
           </template>
         </n-list>
       </n-grid-item>
 
+      <!-- 站点公告 -->
       <n-grid-item id="tips" span="10 800:4 1200:3">
         <n-card>
           <template #cover>
-            <Windmill :cls="winds" />
+            <WindmillVue :cls="winds" />
           </template>
           <template #header>站点公告</template>
+          <!-- 风速按钮与弹窗 -->
           <template #header-extra>
             <n-popover trigger="hover">
               <template #trigger>
                 <n-button circle @click="winds = !winds">
                   <template #icon>
-                    <n-icon><BatteryCharging /></n-icon>
+                    <n-icon>
+                      <BatteryCharging />
+                    </n-icon>
                   </template>
                 </n-button>
               </template>
               <span>调整动画风速</span>
             </n-popover>
           </template>
-          <Banner />
+          <!-- 内容 -->
+          <BannerVue />
         </n-card>
       </n-grid-item>
     </n-grid>
@@ -107,9 +108,9 @@
 <script>
 import axios from "axios";
 import { Link, Search, Reload, BatteryCharging } from "@vicons/ionicons5";
-import PopupCard from "@/components/PopupCard.vue";
-import Windmill from "@/components/Windmill.vue";
-import Banner from "@/components/Banner.vue";
+import PopupCardVue from "@/components/PopupCard.vue";
+import WindmillVue from "@/components/Windmill.vue";
+import BannerVue from "@/components/Banner.vue";
 
 export default {
   name: "home",
@@ -130,7 +131,7 @@ export default {
       size: 5,
       winds: true,
       hover: false,
-      key_words: "",
+      keywords: "",
       input_words: "",
     };
   },
@@ -145,25 +146,16 @@ export default {
       });
       this.key_words = this.input_words = "";
     },
-    select() {
-      if (this.input_words) {
-        this.key_words = this.input_words;
-        axios.get("/i/t/" + this.key_words).then((req) => {
-          this.page = 1;
-          this.lock = !req.data.length < 40;
-          this.data = req.data;
-          this.list = this.data.slice(0, 5);
-        });
-      } else this.get_data();
+    on_search(keyword) {
+      // 跳转查询页面
+      this.$router.push({ name: "search", params: { keyword } })
     },
     on_show(page) {
-      // 翻页函数
+      // 翻页组件切换页面触发函数
       this.page = page;
+      // 判断是否到底
       if (page == this.data.length / 5 && !this.lock) {
-        let url = "/i/";
-        // 根据是否存在关键字刷新数据
-        if (this.key_words) url += "t/" + this.key_words;
-        axios.get(url + "?skip=" + parseInt(page / 8)).then((req) => {
+        axios.get("/i/" + "?skip=" + parseInt(page / 8)).then((req) => {
           this.data.push(...req.data);
           this.lock = !req.data.length < 40;
         });
@@ -173,18 +165,15 @@ export default {
     goto(item) {
       if (!this.hover) this.$router.push("/item/" + item.id);
     },
-    open(url) {
-      window.open(url);
-    },
   },
   components: {
     Link,
     Search,
     Reload,
     BatteryCharging,
-    PopupCard,
-    Windmill,
-    Banner,
+    PopupCardVue,
+    WindmillVue,
+    BannerVue,
   },
 };
 </script>
@@ -194,11 +183,13 @@ export default {
   top: 7vh;
   position: sticky;
 }
+
 @media (min-width: 848px) {
   #tips {
     margin-left: 7px;
   }
 }
+
 @media (max-width: 848px) {
   #tips {
     margin-top: 7px;

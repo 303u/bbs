@@ -19,25 +19,17 @@ def hasher(password: str | None) -> str | None:
         "utf8"), **Config.security).hexdigest() if password else None
 
 
-def token(subject: str | int, token_key: str = TOKEN_KEY) -> str:
+def token(sub: str | int, key: str = TOKEN_KEY, time: float = 7*24) -> str:
     """创建令牌"""
     return jwt.encode({
-        "exp": datetime.utcnow() + timedelta(days=7),
-        "sub": str(subject)
-    }, token_key, algorithm="HS256")
+        "exp": datetime.utcnow() + timedelta(hours=time),
+        "sub": str(sub)
+    }, key, algorithm="HS256")
 
 
-def verification(subject: str | int, token_key: str = TOKEN_KEY) -> str:
-    """创建验证码"""
-    return jwt.encode({
-        "exp": datetime.utcnow() + timedelta(minutes=5),
-        "sub": str(subject)
-    }, token_key, algorithm="HS256")
-
-
-def verify_token(token: str, token_key: str = TOKEN_KEY) -> str:
+def verify_token(token: str, key: str = TOKEN_KEY) -> str:
     """验证令牌"""
     try:
-        return jwt.decode(token, token_key, algorithms=["HS256"])["sub"]
+        return jwt.decode(token, key, algorithms=["HS256"])["sub"]
     except JWTError:
         raise HTTPException(403, "身份验证无效")

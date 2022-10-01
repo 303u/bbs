@@ -1,21 +1,21 @@
 <template>
   <n-drawer v-model:show="active" :width="270" :placement="'left'">
     <n-drawer-content>
-      <n-menu
-        :options="menuBar"
-        :default-value="$route.name"
-        @update:value="menuValue"
-      />
+      <n-menu :options="menuBar" :default-value="$route.name" @update:value="menuValue" />
 
       <template #header>
-        <n-space @click="menuValue('user')">
-          <n-avatar>
-            <n-icon><PersonCircle /></n-icon>
-          </n-avatar>
-          <n-ellipsis style="max-width: 160px; margin: 7px" :tooltip="false">
-            {{ $store.state.user.name }}
-          </n-ellipsis>
-        </n-space>
+        <div id="menu_header" @click="menuValue('user')">
+          <n-space>
+            <n-avatar>
+              <n-icon>
+                <PersonCircle />
+              </n-icon>
+            </n-avatar>
+            <n-ellipsis style="max-width: 160px; margin: 7px" :tooltip="false">
+              {{ $store.state.user.name }}
+            </n-ellipsis>
+          </n-space>
+        </div>
       </template>
 
       <template #footer>
@@ -36,7 +36,7 @@
             </template>
           </n-button>
 
-          <n-button circle @click="this.$store.commit('theme')">
+          <n-button circle @click="$store.commit('theme')">
             <template #icon>
               <n-icon>
                 <Contrast />
@@ -67,14 +67,13 @@ import { PersonCircle, ListSharp, Contrast } from "@vicons/ionicons5";
 // 菜单栏
 const menuBar = [
   { label: "首页", key: "home" },
-  { label: "创建", key: "create" },
+  { label: "搜索", key: "search" },
   { label: "关于", key: "about" },
   {
     label: "用户",
     key: "",
     children: [
       { label: "主页", key: "user" },
-      { label: "历史", key: "history" },
       { label: "安全", key: "security" },
     ],
   },
@@ -84,7 +83,7 @@ export default {
   data() {
     axios.defaults.headers.common[
       "Authorization"
-    ] = `Bearer ${sessionStorage.getItem("token")}`;
+    ] = `Bearer ${sessionStorage["token"] || localStorage["token"]}`;
     let msg = useMessage();
     let ldb = useLoadingBar();
     // 加载动效
@@ -130,6 +129,7 @@ export default {
     },
     signout() {
       // 清除所有数据并登出
+      localStorage.clear()
       sessionStorage.clear();
       this.$store.commit("clear_all");
       this.$router.push("/verify/login");
@@ -147,3 +147,11 @@ export default {
   components: { PersonCircle, ListSharp, Contrast },
 };
 </script>
+
+
+<style scoped>
+#menu_header {
+  width: 222px;
+  cursor: pointer;
+}
+</style>

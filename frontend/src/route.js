@@ -7,22 +7,20 @@ const router = createRouter({
             path: "/",
             component: () => import('@/views/'),
             // 检查是否存在登录token
-            beforeEnter() { if (!sessionStorage.getItem("token")) return "/verify"; },
+            beforeEnter() { if (!sessionStorage["token"] && !localStorage["token"]) return "/verify"; },
             children: [
                 { path: "", redirect() { return { name: "home" } } },
                 { path: "home", name: "home", component: () => import('@/views/home/') },
-                { path: "about", name: "about", component: () => import('@/views/home/about') },
-                { path: "create", name: "create", component: () => import('@/views/home/create') },
-                // { path: "search", name: "search", component: () => import('@/views/home/search') },
+                { path: "search/:keyword?", name: "search", component: () => import('@/views/home/search') },
                 { path: "item/:id", name: "item", component: () => import('@/views/home/items'), },
-                { path: "rewrite/:id", name: "rewrite", component: () => import('@/views/home/rewrite') },
+                { path: "write/:id?", name: "write", component: () => import('@/views/home/write') },
+                { path: "about", name: "about", component: () => import('@/views/home/about') },
                 {
                     path: "user",
                     component: () => import('@/views/user/'),
                     children: [
                         { path: "", redirect() { return { name: "user" } } },
                         { path: "home", name: "user", component: () => import('@/views/user/home') },
-                        { path: "history", name: "history", component: () => import('@/views/user/history') },
                         { path: "security", name: "security", component: () => import('@/views/user/security') },
                     ],
                 },
@@ -31,8 +29,8 @@ const router = createRouter({
         {
             path: "/verify",
             component: () => import('@/views/verify/'),
-            // 检查是否已登录
-            beforeEnter() { if (sessionStorage.getItem("token")) return "/"; },
+            // 检查是否存在登录token
+            beforeEnter() { if (sessionStorage["token"] || localStorage["token"]) return "/"; },
             children: [
                 { path: "", redirect() { return { name: "login" } } },
                 { path: "login", name: "login", component: () => import('@/views/verify/login') },

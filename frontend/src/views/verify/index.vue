@@ -4,30 +4,19 @@
       <template #header>{{ ["登录", "注册", "找回"][page] }}</template>
       <template #header-extra>
         <n-space>
-          <n-button
-            :type="page == 0 ? 'success' : ''"
-            @click="change_page(0)"
-            text
-          >
+          <n-button :type="page == 0 ? 'success' : ''" @click="change_page(0)" text>
             登录
           </n-button>
-          <n-button
-            :type="page == 1 ? 'success' : ''"
-            @click="change_page(1)"
-            text
-          >
+          <n-button :type="page == 1 ? 'success' : ''" @click="change_page(1)" text>
             注册
           </n-button>
-          <n-button
-            :type="page == 2 ? 'success' : ''"
-            @click="change_page(2)"
-            text
-          >
+          <n-button :type="page == 2 ? 'success' : ''" @click="change_page(2)" text>
             找回
           </n-button>
         </n-space>
       </template>
 
+      <!-- 保持页面更换不清空输入 -->
       <router-view v-slot="{ Component }">
         <keep-alive>
           <component :is="Component" />
