@@ -9,29 +9,66 @@
         <n-time :time="Number($store.state.user.id?.substring(0, 10)||0)" format="yyyy-MM-dd" unix />
       </template>
     </n-timeline-item> -->
-    <n-grid-item span="12 700:5 1200:4" id="info">
-      <n-list bordered>
-        <n-list-item>
-          <n-empty description="空空如也"></n-empty>
-        </n-list-item>
-        <n-list-item>
-          <n-time :time="Number($store.state.user.id?.substring(0, 10)||0)" unix />
-        </n-list-item>
-        <n-list-item>
-          <n-time :time="0" :to="864000000" type="relative" />
-        </n-list-item>
-        <n-list-item>
-          <n-button block @click="$router.push('security')">修改信息</n-button>
-        </n-list-item>
-      </n-list>
-    </n-grid-item>
+    <n-gi span="12 700:5 1200:4" id="info">
+      <n-space vertical>
+        <!-- 关联信息 -->
+        <n-card>
+          <n-grid cols="2">
+            <n-gi>
+              <n-statistic tabular-nums>
+                <n-text> 文章数量 </n-text>
+                <n-number-animation show-separator :from="0" :to="data.length" />
+              </n-statistic>
+            </n-gi>
+          </n-grid>
+        </n-card>
+        <!-- 个人信息 -->
+        <n-table>
+          <tbody>
+            <tr>
+              <td> 性别 </td>
+              <td>
+                <n-text depth="3" underline>未完善</n-text>
+              </td>
+            </tr>
+            <tr>
+              <td> 城市 </td>
+              <td>
+                <n-text depth="3" underline>未完善</n-text>
+              </td>
+            </tr>
+            <tr>
+              <td> 诚信 </td>
+              <td> 100 </td>
+            </tr>
+            <tr>
+              <td> 认证 </td>
+              <td>
+                <n-text depth="3" underline>未完善</n-text>
+              </td>
+            </tr>
+            <tr>
+              <td> 活跃 </td>
+              <td>
+                <n-time :time="0" :to="86400000" type="relative" />
+              </td>
+            </tr>
+            <tr>
+              <td colspan="2">
+                <n-button block>修改信息</n-button>
+              </td>
+            </tr>
+          </tbody>
+        </n-table>
+      </n-space>
+    </n-gi>
     <!-- 文章 -->
-    <n-grid-item span="12 700:7 1200:8">
+    <n-gi span="12 700:7 1200:8">
       <n-space vertical>
         <n-list bordered>
           <template #header>
             <n-space justify="space-between">
-              <n-h3 prefix="bar" align-text style="margin-bottom: 0;">仓库文章</n-h3>
+              <n-h3 align-text style="margin-bottom: 0;">仓库文章</n-h3>
               <n-space>
                 <!-- 刷新按钮 -->
                 <n-button circle tertiary type="info" @click="get_data">
@@ -52,9 +89,6 @@
               </n-space>
             </n-space>
           </template>
-          <n-list-item v-if="!list.length">
-            <n-empty description="空空如也"></n-empty>
-          </n-list-item>
 
           <n-list-item :key="li" v-for="li of list">
             <n-thing content-indented>
@@ -65,15 +99,33 @@
                 <n-time :time="Number(li.time)" unix />
               </template>
               <!-- 大概内容 -->
-              <n-ellipsis :line-clamp="2" :tooltip="false">
+              <n-ellipsis :line-clamp="2" :tooltip="false" class="item_body">
                 {{ li.body }}
               </n-ellipsis>
               <!-- 操作 -->
               <template #action>
                 <n-space>
-                  <n-button @click="$router.push('/item/' + li.id)">查看</n-button>
-                  <n-button @click="$router.push('/write/' + li.id)">修改</n-button>
-                  <n-button @click="delete_item(li)">删除</n-button>
+                  <n-button circle tertiary type="info" @click="$router.push('/item/' + li.id)">
+                    <template #icon>
+                      <n-icon>
+                        <Eye />
+                      </n-icon>
+                    </template>
+                  </n-button>
+                  <n-button circle tertiary type="success" @click="$router.push('/write/' + li.id)">
+                    <template #icon>
+                      <n-icon>
+                        <Pencil />
+                      </n-icon>
+                    </template>
+                  </n-button>
+                  <n-button circle tertiary type="error" @click="delete_item(li)">
+                    <template #icon>
+                      <n-icon>
+                        <TrashOutline />
+                      </n-icon>
+                    </template>
+                  </n-button>
                 </n-space>
               </template>
             </n-thing>
@@ -92,7 +144,7 @@
           <!-- 头部内容 -->
           <template #header>
             <n-space justify="space-between">
-              <n-h3 prefix="bar" align-text style="margin-bottom: 0;">本地历史记录</n-h3>
+              <n-h3 align-text style="margin-bottom: 0;">本地历史记录</n-h3>
               <n-space>
                 <!-- 刷新按钮 -->
                 <n-button circle tertiary type="info" @click="get_history_data">
@@ -118,7 +170,7 @@
           </n-list-item>
 
           <!-- 跳入内容 -->
-          <n-list-item :key="li" v-for="li of history.list" @click="this.$router.push('/item/' + li.id)">
+          <n-list-item :key="li" v-for="li of history.list" @click="$router.push('/item/' + li.id)">
             <n-thing content-indented>
               <!-- 头像 -->
               <template #avatar>
@@ -128,9 +180,8 @@
               </template>
               <!-- 标题 -->
               <template #header>{{ li.title }}</template>
-              <!-- 时间 -->
-              <template #header-extra>
-                <n-time :time="Number(li.time)" unix />
+              <template #description>
+                描述
               </template>
             </n-thing>
           </n-list-item>
@@ -143,13 +194,13 @@
           </template>
         </n-list>
       </n-space>
-    </n-grid-item>
+    </n-gi>
   </n-grid>
 </template>
 
 <script>
 import axios from "axios";
-import { Add, Reload, TrashOutline } from "@vicons/ionicons5";
+import { Add, Reload, TrashOutline, Eye, Pencil } from "@vicons/ionicons5";
 import PopupCardVue from "@/components/PopupCard.vue";
 export default {
   name: "home",
@@ -212,7 +263,7 @@ export default {
       this.history.list = this.history.data.slice((page - 1) * 5, page * 5);
     },
   },
-  components: { Reload, TrashOutline, Add, PopupCardVue }
+  components: { Reload, TrashOutline, Add, Eye, Pencil, PopupCardVue }
   // beforeMount() {},
   // beforeUnmount() {},
   // activated() {},
@@ -220,9 +271,16 @@ export default {
 </script>
 
 <style scoped>
+.item_body {
+  max-width: 85vw;
+}
+
 @media (min-width: 748px) {
   #info {
     margin-right: 7px;
+  }
+  .item_body {
+    max-width: 90vw;
   }
 }
 

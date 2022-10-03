@@ -1,66 +1,72 @@
 <template>
-  <n-card id="search">
+  <n-space vertical>
     <!-- 搜索与刷新栏 -->
-    <template #header>
-      <n-space vertical>
-        <n-input-group>
-          <n-input clearable v-model:value="input_words" @keyup.enter="on_search" />
-          <n-button type="info" @keyup.enter="on_search">
-            <template #icon>
-              <n-icon>
-                <Search />
-              </n-icon>
-            </template>
-            搜索
-          </n-button>
-        </n-input-group>
-        <!-- 关键字展示 -->
-        <TagListVue v-if="key_words" :data="key_words" />
-      </n-space>
-    </template>
-  </n-card>
+    <n-card>
+      <template #header>
+        <n-space vertical>
+          <n-input-group>
+            <n-input clearable v-model:value="input_words" @keyup.enter="on_search" />
+            <n-button type="info" @keyup.enter="on_search">
+              <template #icon>
+                <n-icon>
+                  <Search />
+                </n-icon>
+              </template>
+              搜索
+            </n-button>
+          </n-input-group>
+          <!-- 关键字展示 -->
+          <TagListVue v-if="key_words" :data="key_words" />
+        </n-space>
+      </template>
+    </n-card>
+
+    <!-- 搜到内容 -->
+    <n-list bordered>
+
+      <n-list-item v-if="!list.length">
+        <n-empty description="空空如也"></n-empty>
+      </n-list-item>
+
+      <!-- 页面内容 -->
+      <n-list-item :key="li" v-for="li of list" @click="goto(li)">
+        <n-thing>
+          <!-- 头像 -->
+          <template #avatar>
+            <div @mouseover="hover = 1" @mouseout="hover = 0">
+              <PopupCardVue :id="li.author" />
+            </div>
+          </template>
+          <!-- 标题 -->
+          <template #header>
+            {{ li.title }}
+          </template>
+          <!-- 内容 -->
+          <template #footer>
+            <n-ellipsis :line-clamp="2" :tooltip="false">
+              {{ li.body }}
+            </n-ellipsis>
+          </template>
+          <template #action>
+            <n-time :time="Number(li.time)" unix />
+          </template>
+        </n-thing>
+      </n-list-item>
+
+      <!-- 翻页控件 -->
+      <template #footer>
+        <n-space justify="center">
+          <n-pagination :page-slot="5" v-model:page="page" :on-update:page="on_show" v-model:page-size="size"
+            :item-count="data.length" />
+        </n-space>
+      </template>
+    </n-list>
+
+    <!-- 推荐内容 -->
+    <IntroVue />
+  </n-space>
 
 
-  <!-- 搜到内容 -->
-  <n-list bordered>
-
-    <n-list-item v-if="!list.length">
-      <n-empty description="空空如也"></n-empty>
-    </n-list-item>
-
-    <!-- 页面内容 -->
-    <n-list-item :key="li" v-for="li of list" @click="goto(li)">
-      <n-thing>
-        <!-- 头像 -->
-        <template #avatar>
-          <div @mouseover="hover = 1" @mouseout="hover = 0">
-            <PopupCardVue :id="li.author" />
-          </div>
-        </template>
-        <!-- 标题 -->
-        <template #header>
-          {{ li.title }}
-        </template>
-        <!-- 内容 -->
-        <template #footer>
-          <n-ellipsis :line-clamp="2" :tooltip="false">
-            {{ li.body }}
-          </n-ellipsis>
-        </template>
-        <template #action>
-          <n-time :time="Number(li.time)" unix />
-        </template>
-      </n-thing>
-    </n-list-item>
-
-    <!-- 翻页控件 -->
-    <template #footer>
-      <n-space justify="center">
-        <n-pagination :page-slot="5" v-model:page="page" :on-update:page="on_show" v-model:page-size="size"
-          :item-count="data.length" />
-      </n-space>
-    </template>
-  </n-list>
 </template>
 
 <script>
@@ -68,7 +74,7 @@ import axios from "axios";
 import { Link, Search, Reload } from "@vicons/ionicons5";
 import PopupCardVue from "@/components/PopupCard.vue";
 import TagListVue from "@/components/TagList.vue";
-
+import IntroVue from "@/components/Intro.vue";
 export default {
   data() {
     let keyword = this.$route.params.keyword || "";
@@ -128,6 +134,7 @@ export default {
     Reload,
     PopupCardVue,
     TagListVue,
+    IntroVue,
   },
   // 捕捉路由参数变化
   watch: {

@@ -3,105 +3,86 @@
     <!-- banner 横幅 -->
     <BannerVue />
 
-    <!-- 文章与部分评论 -->
-    <n-grid cols="10" item-responsive responsive="self">
-      <n-grid-item span="10 800:6 1200:7">
-        <n-list bordered>
-          <!-- 搜索与刷新栏 -->
-          <template #header>
-            <n-space vertical>
-              <n-input-group>
-                <n-button tertiary type="info" @click="get_data">
-                  <template #icon>
-                    <n-icon>
-                      <Reload />
-                    </n-icon>
-                  </template>
-                </n-button>
-                <n-input clearable v-model:value="input_words" @keyup.enter="on_search" />
-                <n-button tertiary type="primary" @click="on_search">
-                  <template #icon>
-                    <n-icon>
-                      <Search />
-                    </n-icon>
-                  </template>
-                </n-button>
-              </n-input-group>
-              <!-- 关键字展示 -->
-              <n-space>
-                <div :key="li" v-for="li of keywords.split(' ')">
-                  <n-tag round v-if="li" size="large">
-                    {{ li }}
-                  </n-tag>
-                </div>
+    <n-grid cols="10" x-gap="6" y-gap="6" item-responsive responsive="self">
+      <!-- 内容主栏 -->
+      <n-gi span="10 800:6 1200:7">
+        <n-space vertical>
+          <n-list bordered>
+            <!-- 搜索与刷新栏 -->
+            <template #header>
+              <n-space vertical>
+                <n-input-group>
+                  <n-button tertiary type="info" @click="get_data">
+                    <template #icon>
+                      <n-icon>
+                        <Reload />
+                      </n-icon>
+                    </template>
+                  </n-button>
+                  <n-input clearable v-model:value="input_words" @keyup.enter="on_search" />
+                  <n-button tertiary type="primary" @click="on_search">
+                    <template #icon>
+                      <n-icon>
+                        <Search />
+                      </n-icon>
+                    </template>
+                  </n-button>
+                </n-input-group>
+                <!-- 关键字展示 -->
+                <n-space>
+                  <div :key="li" v-for="li of keywords.split(' ')">
+                    <n-tag round v-if="li" size="large">
+                      {{ li }}
+                    </n-tag>
+                  </div>
+                </n-space>
               </n-space>
-            </n-space>
-          </template>
+            </template>
 
-          <!-- 页面内容 -->
-          <n-list-item :key="li" v-for="li of list" @click="goto(li)">
-            <n-thing>
-              <!-- 头像 -->
-              <template #avatar>
-                <div @mouseover="hover = 1" @mouseout="hover = 0">
-                  <PopupCardVue :id="li.author" />
-                </div>
-              </template>
-              <!-- 标题 -->
-              <template #header>
-                {{ li.title }}
-              </template>
-              <!-- 详情栏 -->
-              <!-- <template #description></template> -->
-              <!-- 内容 -->
-              <template #footer>
-                <n-ellipsis :line-clamp="2" :tooltip="false">
-                  {{ li.body }}
-                </n-ellipsis>
-              </template>
-              <template #action>
-                <n-time :time="Number(li.time)" unix />
-              </template>
-            </n-thing>
-          </n-list-item>
+            <!-- 页面内容 -->
+            <n-list-item :key="li" v-for="li of list" @click="goto(li)">
+              <n-thing>
+                <!-- 头像 -->
+                <template #avatar>
+                  <div @mouseover="hover = 1" @mouseout="hover = 0">
+                    <PopupCardVue :id="li.author" />
+                  </div>
+                </template>
+                <!-- 标题 -->
+                <template #header>
+                  {{ li.title }}
+                </template>
+                <!-- 详情栏 -->
+                <!-- <template #description></template> -->
+                <!-- 内容 -->
+                <template #footer>
+                  <n-ellipsis :line-clamp="2" :tooltip="false" class="item_body">{{ li.body }}</n-ellipsis>
+                </template>
+                <template #action>
+                  <n-time :time="Number(li.time)" unix />
+                </template>
+              </n-thing>
+            </n-list-item>
 
-          <!-- 翻页控件 -->
-          <template #footer>
-            <n-space justify="center">
-              <n-pagination :page-slot="5" v-model:page="page" :on-update:page="on_show" v-model:page-size="size"
-                :item-count="data.length" />
-            </n-space>
-          </template>
-        </n-list>
-      </n-grid-item>
+            <!-- 翻页控件 -->
+            <template #footer>
+              <n-space justify="center">
+                <n-pagination :page-slot="5" v-model:page="page" :on-update:page="on_show" v-model:page-size="size"
+                  :item-count="data.length" />
+              </n-space>
+            </template>
+          </n-list>
+        </n-space>
+      </n-gi>
 
       <!-- 站点公告 -->
-      <n-grid-item id="tips" span="10 800:4 1200:3">
-        <n-card>
-          <template #cover>
-            <WindmillVue :cls="winds" />
-          </template>
-          <template #header>站点公告</template>
-          <!-- 风速按钮与弹窗 -->
-          <template #header-extra>
-            <n-popover trigger="hover">
-              <template #trigger>
-                <n-button circle @click="winds = !winds">
-                  <template #icon>
-                    <n-icon>
-                      <BatteryCharging />
-                    </n-icon>
-                  </template>
-                </n-button>
-              </template>
-              <span>调整动画风速</span>
-            </n-popover>
-          </template>
-          <!-- 内容 -->
-          <BannerVue />
-        </n-card>
-      </n-grid-item>
+      <n-gi id="tips" span="10 800:4 1200:3">
+        <TipsVue />
+      </n-gi>
     </n-grid>
+
+    <!-- 其他推荐 -->
+    <IntroVue />
   </n-space>
 </template>
 
@@ -109,9 +90,9 @@
 import axios from "axios";
 import { Link, Search, Reload, BatteryCharging } from "@vicons/ionicons5";
 import PopupCardVue from "@/components/PopupCard.vue";
-import WindmillVue from "@/components/Windmill.vue";
 import BannerVue from "@/components/Banner.vue";
-
+import TipsVue from "@/components/Tips.vue";
+import IntroVue from "@/components/Intro.vue";
 export default {
   name: "home",
   data() {
@@ -129,7 +110,6 @@ export default {
       lock: 0,
       page: 1,
       size: 5,
-      winds: true,
       hover: false,
       keywords: "",
       input_words: "",
@@ -172,8 +152,9 @@ export default {
     Reload,
     BatteryCharging,
     PopupCardVue,
-    WindmillVue,
     BannerVue,
+    TipsVue,
+    IntroVue,
   },
 };
 </script>
@@ -184,15 +165,13 @@ export default {
   position: sticky;
 }
 
-@media (min-width: 848px) {
-  #tips {
-    margin-left: 7px;
-  }
+.item_body {
+  max-width: 85vw;
 }
 
-@media (max-width: 848px) {
-  #tips {
-    margin-top: 7px;
+@media (min-width: 448px) {
+  .item_body {
+    max-width: 90vw;
   }
 }
 </style>

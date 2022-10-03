@@ -1,17 +1,11 @@
 <template>
   <n-space vertical>
     <n-card id="user" size="large" :bordered="false">
-      <template #header>
-        <!-- 用户名称 -->
-        {{ $store.state.user.name }}
-      </template>
+      <!-- 用户名称 -->
+      <template #header>{{ $store.state.user.name }}</template>
+      <!-- 用户头像 -->
       <template #header-extra>
-        <!-- 用户头像 -->
-        <n-avatar>
-          <n-icon>
-            <PersonCircle />
-          </n-icon>
-        </n-avatar>
+        <n-avatar></n-avatar>
       </template>
       <!-- 菜单栏 -->
       <n-menu :value="$route.name" mode="horizontal" :options="menuBar" @update:value="menuValue" />

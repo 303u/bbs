@@ -1,23 +1,22 @@
 <template>
   <n-drawer v-model:show="active" :width="270" :placement="'left'">
     <n-drawer-content>
+      <!-- 菜单选项 -->
       <n-menu :options="menuBar" :default-value="$route.name" @update:value="menuValue" />
-
+      <!-- 菜单栏顶部 -->
       <template #header>
         <div id="menu_header" @click="menuValue('user')">
           <n-space>
-            <n-avatar>
-              <n-icon>
-                <PersonCircle />
-              </n-icon>
-            </n-avatar>
+            <!-- 头像 -->
+            <n-avatar></n-avatar>
+            <!-- 名称 -->
             <n-ellipsis style="max-width: 160px; margin: 7px" :tooltip="false">
               {{ $store.state.user.name }}
             </n-ellipsis>
           </n-space>
         </div>
       </template>
-
+      <!-- 菜单栏底部 -->
       <template #footer>
         <n-button block @click="signout">登出</n-button>
       </template>
@@ -26,8 +25,10 @@
 
   <n-layout style="height: 100vh" :native-scrollbar="false">
     <n-layout style="top: 0; z-index: 1000; position: sticky">
+      <!-- 顶部横栏 -->
       <n-layout-header bordered style="padding: 5px">
         <n-space justify="space-between">
+          <!-- 菜单 -->
           <n-button circle @click="active = true">
             <template #icon>
               <n-icon>
@@ -35,7 +36,7 @@
               </n-icon>
             </template>
           </n-button>
-
+          <!-- 主题切换 -->
           <n-button circle @click="$store.commit('theme')">
             <template #icon>
               <n-icon>
@@ -47,15 +48,18 @@
       </n-layout-header>
     </n-layout>
 
-    <div style="padding: 24px">
-      <!-- 保存状态 在调试情况下会导致热重载报错 -->
-      <!-- <router-view v-slot="{ Component }">
-        <keep-alive include="index">
-          <component :is="Component" :key="$route.name" />
-        </keep-alive>
-      </router-view> -->
-      <router-view></router-view>
-    </div>
+    <!-- 保存状态 在调试情况下会导致热重载报错 -->
+    <!-- <router-view v-slot="{ Component }">
+      <keep-alive include="index">
+        <component :is="Component" :key="$route.name" />
+      </keep-alive>
+    </router-view> -->
+    <!-- 身份验证通过的状态下展示页面 -->
+    <router-view v-if="$store.state.user.id" style="padding: 2vw"></router-view>
+
+    <!-- 增加等待 避免刷新时身份验证出错的同时还请求了其他资源 -->
+    <n-result v-if="!$store.state.user.id" status="info" title="请稍等" description="正在验证用户身份"></n-result>
+
   </n-layout>
 </template>
 
@@ -81,6 +85,7 @@ const menuBar = [
 
 export default {
   data() {
+    // 携带身份令牌
     axios.defaults.headers.common[
       "Authorization"
     ] = `Bearer ${sessionStorage["token"] || localStorage["token"]}`;
@@ -108,12 +113,10 @@ export default {
         }
       }
     );
-    axios
-      .get("/u/")
-      .then((req) => {
-        this.$store.commit("user", req.data);
-      })
-      .catch(this.signout);
+    // 验证用户
+    axios.get("/u/").then((req) => {
+      this.$store.commit("user", req.data);
+    }).catch(this.signout);
     return {
       menuBar,
       request,

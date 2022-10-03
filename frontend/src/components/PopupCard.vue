@@ -4,18 +4,14 @@
   <n-popover trigger="hover" :duration="100">
     <template #trigger>
       <!-- 默认外部显示头像 -->
-      <n-avatar @click="show_user">
-        <n-icon> </n-icon>
-      </n-avatar>
+      <n-avatar @click="show_user"></n-avatar>
     </template>
 
     <n-card>
       <template #header>
         <n-space>
           <!-- 头像 -->
-          <n-avatar>
-            <n-icon> </n-icon>
-          </n-avatar>
+          <n-avatar></n-avatar>
           <!-- 名称 -->
           <n-ellipsis style="width: 155px; margin-top: 3px" :tooltip="false">
             {{ $store.state.user_info[id]?.name }}

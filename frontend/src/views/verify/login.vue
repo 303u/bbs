@@ -11,7 +11,7 @@
         <template #trigger>
           <n-switch v-model:value="keep" />
         </template>
-        <n-text>选中可保持七天登录身份</n-text>
+        <n-text>选中可保持七天登录身份，多屏共享一个账号</n-text>
       </n-popover>
     </n-form-item-row>
     <n-button type="primary" @click="submit" block>登录</n-button>

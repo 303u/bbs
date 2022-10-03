@@ -19,17 +19,17 @@
       <n-form-item-row label="内容" v-show="!show_markdown">
         <n-grid cols="2" item-responsive responsive="self">
           <!-- 输入组件 -->
-          <n-grid-item span="2 700:1">
+          <n-gi span="2 700:1">
             <n-input clearable show-count type="textarea" maxlength="6500" v-model:value="data.body" :autosize="{
               minRows: 10,
             }" />
-          </n-grid-item>
+          </n-gi>
           <!-- 效果预览 -->
-          <n-grid-item span="0 700:1">
+          <n-gi span="0 700:1">
             <n-card :bordered="false">
               <div v-html="marked(data.body)"></div>
             </n-card>
-          </n-grid-item>
+          </n-gi>
         </n-grid>
       </n-form-item-row>
 
@@ -48,11 +48,13 @@
       <template #footer>
         <n-space justify="center">
           <n-button-group>
-            <n-button secondary @click="again">再次编写</n-button>
-            <n-button secondary @click="this.$router.push('/')">
+            <n-button secondary @click="$router.back()">
+              返回上级
+            </n-button>
+            <n-button secondary @click="$router.push('/')">
               返回主页
             </n-button>
-            <n-button secondary @click="this.$router.push('/user')">
+            <n-button secondary @click="$router.push('/user')">
               查看投稿
             </n-button>
           </n-button-group>
@@ -79,7 +81,7 @@ export default {
         // 判断是否为作者
         if (req.data.author != this.$store.state.user.id) {
           this.$router.push("/");
-        } else { data = { ...req.data, tag: req.data.tag.split(",") }; }
+        } else { this.data = { ...req.data, tag: req.data.tag.split(",") }; }
       }).catch(() => { this.$router.push("/") });
     }
     return {
@@ -107,17 +109,14 @@ export default {
         tag.length <= 128 &&
         0 < this.data.body.length
       ) {
-        axios.post("/i/", { ...this.data, tag }).then(() => {
-          // 显示成功
-          this.suc = 1;
-        });
+        if (this.$route.params.id) {
+          // 如果为修改
+          axios.put("/i/" + this.$route.params.id, { ...this.data, tag }).then(() => this.suc = 1);
+        } else {
+          // 如果为新建
+          axios.post("/i/", { ...this.data, tag }).then(() => this.suc = 1)
+        };
       }
-    },
-    again() {
-      // 再写一篇
-      this.suc = 0;
-      this.data.title = this.data.body = "";
-      this.data.tag = [];
     },
   },
   components: { LogoMarkdown },

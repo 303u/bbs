@@ -1,17 +1,21 @@
 <template>
   <n-layout style="height: 100vh">
     <n-card>
-      <template #header>{{ ["登录", "注册", "找回"][page] }}</template>
+      <template #header>
+        <n-text v-if="$route.name == 'login'">登录</n-text>
+        <n-text v-if="$route.name == 'regest'">注册</n-text>
+        <n-text v-if="$route.name == 'retrieve'">找回</n-text>
+      </template>
       <template #header-extra>
         <n-space>
-          <n-button :type="page == 0 ? 'success' : ''" @click="change_page(0)" text>
-            登录
+          <n-button @click="$router.push({name:'login'})" text>
+            <n-text :type="$route.name == 'login' ? 'success' : ''">登录</n-text>
           </n-button>
-          <n-button :type="page == 1 ? 'success' : ''" @click="change_page(1)" text>
-            注册
+          <n-button @click="$router.push({name:'regest'})" text>
+            <n-text :type="$route.name == 'regest' ? 'success' : ''">注册</n-text>
           </n-button>
-          <n-button :type="page == 2 ? 'success' : ''" @click="change_page(2)" text>
-            找回
+          <n-button @click="$router.push({name:'retrieve'})" text>
+            <n-text :type="$route.name == 'retrieve' ? 'success' : ''">找回</n-text>
           </n-button>
         </n-space>
       </template>
@@ -25,7 +29,7 @@
 
       <template #action>
         <n-space>
-          <n-button circle @click="this.$store.commit('theme')">
+          <n-button circle @click="$store.commit('theme')">
             <template #icon>
               <n-icon>
                 <Contrast />
@@ -69,14 +73,7 @@ export default {
     return {
       request,
       response,
-      page: ["login", "regest", "retrieve"].indexOf(this.$route.name),
     };
-  },
-  methods: {
-    change_page(page) {
-      this.page = page;
-      this.$router.push({ name: ["login", "regest", "retrieve"][page] });
-    },
   },
   components: {
     Contrast,

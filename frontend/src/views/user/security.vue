@@ -1,7 +1,7 @@
 <template>
   <n-grid cols="12" item-responsive responsive="self">
     <!-- 信息修改 -->
-    <n-grid-item span="12 700:6 1200:4">
+    <n-gi span="12 700:6 1200:4">
       <n-card>
         <n-collapse default-expanded-names="user_info" accordion>
           <n-collapse-item title="修改信息" name="user_info">
@@ -81,19 +81,23 @@
           </n-collapse-item>
         </n-collapse>
       </n-card>
-    </n-grid-item>
+    </n-gi>
     <!-- 安全信息展示 -->
-    <n-grid-item span="6 700:3 1200:4">
+    <n-gi span="6 700:3 1200:4">
       <n-timeline>
         <n-timeline-item type="success" title="邮箱号绑定" content="已绑定" />
-        <n-timeline-item type="error" title="手机号绑定" content="暂未开放" />
-        <n-timeline-item type="error" title="身份验证" content="暂未开放" />
+        <n-timeline-item type="error" title="手机号绑定" content="等待完善" />
+        <n-timeline-item type="error" title="身份验证" content="等待完善" />
         <n-timeline-item type="info" title="信息完善" content="等待完善" line-type="dashed" />
-        <n-timeline-item>暂未开放</n-timeline-item>
+        <n-timeline-item  content="等待完善">
+          <template #icon>
+            <n-icon></n-icon>
+          </template>
+        </n-timeline-item>
       </n-timeline>
-    </n-grid-item>
+    </n-gi>
     <!-- 百分比效果 -->
-    <n-grid-item span="6 700:3 1200:4">
+    <n-gi span="6 700:3 1200:4">
       <n-space justify="center">
         <n-progress type="dashboard" gap-position="bottom" :percentage="25">
           <n-statistic tabular-nums>
@@ -104,13 +108,13 @@
       </n-space>
       <n-h2 prefix="bar" type="error">请完善信息</n-h2>
       <n-button block>快速前往</n-button>
-    </n-grid-item>
+    </n-gi>
     <!-- 日历 -->
-    <n-grid-item span="0 700:12">
+    <n-gi span="0 700:12">
       <n-calendar #="{ year, month, date }">
         {{ year }}-{{ month }}-{{ date }}
       </n-calendar>
-    </n-grid-item>
+    </n-gi>
   </n-grid>
 </template>
 
