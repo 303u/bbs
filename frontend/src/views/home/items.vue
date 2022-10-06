@@ -15,6 +15,11 @@
           <template #header-extra>
             <n-time :time="Number(data.time || 0)" unix />
           </template>
+          <template #action>
+            <n-text>点击量</n-text>
+            <n-divider vertical />
+            <n-text depth="3">{{ data.hits }}</n-text>
+          </template>
         </n-card>
         <!-- tag标签 -->
         <TagList :data="data.tag || ''" />
@@ -22,8 +27,8 @@
     </n-card>
 
     <!-- 文章内容 -->
-    <n-card>
-      <div v-html="marked(data.body || '')"></div>
+    <n-card class="markdown">
+      <div v-html="marked(data.content || '')"></div>
     </n-card>
 
     <!-- 评论区 -->
@@ -130,10 +135,9 @@
 <script>
 import axios from "axios";
 import { marked } from "marked";
-import { PersonCircle } from "@vicons/ionicons5";
+import { PersonCircle, Star, ThumbsUpSharp, ThumbsDownSharp } from "@vicons/ionicons5";
 import PopupCard from "@/components/PopupCard.vue";
 import TagList from "@/components/TagList.vue";
-
 export default {
   data() {
     axios.get("/i/" + this.$route.params.id).then((req) => {
@@ -167,7 +171,7 @@ export default {
       }
     },
     reload_comment() {
-      // 加载评论
+      // 重载评论
       axios.get("/t/" + this.data.id).then((req) => {
         this.comment = req.data;
       });
@@ -185,7 +189,7 @@ export default {
   watch: {
     $route() {
       // 如果跳出页面则不执行信息抓取
-      if (this.$route.params.id) {
+      if (this.$route.params.id && this.$route.name == "item") {
         axios.get("/i/" + this.$route.params.id).then((req) => {
           this.data = req.data;
           // 加入历史浏览
@@ -201,6 +205,6 @@ export default {
       }
     }
   },
-  components: { PersonCircle, PopupCard, TagList },
+  components: { PersonCircle, Star, ThumbsUpSharp, ThumbsDownSharp, PopupCard, TagList },
 };
 </script>

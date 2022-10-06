@@ -53,13 +53,25 @@
                   {{ li.title }}
                 </template>
                 <!-- 详情栏 -->
-                <!-- <template #description></template> -->
+                <template #description>
+                  <n-text depth="3">{{ $store.state.user_info[li.author]?.name }}</n-text>
+                </template>
                 <!-- 内容 -->
                 <template #footer>
-                  <n-ellipsis :line-clamp="2" :tooltip="false" class="item_body">{{ li.body }}</n-ellipsis>
+                  <n-ellipsis :line-clamp="2" :tooltip="false" class="item_body">
+                    {{ li.description }}
+                  </n-ellipsis>
                 </template>
+                <!-- 附加内容 -->
                 <template #action>
-                  <n-time :time="Number(li.time)" unix />
+                  <n-space justify="space-between">
+                    <n-text>
+                      <n-text>点击量</n-text>
+                      <n-divider vertical />
+                      <n-text>{{ li.hits }}</n-text>
+                    </n-text>
+                    <n-time :time="Number(li.time)" unix />
+                  </n-space>
                 </template>
               </n-thing>
             </n-list-item>

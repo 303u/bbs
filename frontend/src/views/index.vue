@@ -5,7 +5,7 @@
       <n-menu :options="menuBar" :default-value="$route.name" @update:value="menuValue" />
       <!-- 菜单栏顶部 -->
       <template #header>
-        <div id="menu_header" @click="menuValue('user')">
+        <div id="menu_header" @click="this.$router.push({ name: 'self' })">
           <n-space>
             <!-- 头像 -->
             <n-avatar></n-avatar>
@@ -55,10 +55,12 @@
       </keep-alive>
     </router-view> -->
     <!-- 身份验证通过的状态下展示页面 -->
-    <router-view v-if="$store.state.user.id" style="padding: 2vw"></router-view>
+    <div style="padding: 2vw">
+      <router-view v-if="$store.state.user.id"></router-view>
+      <!-- 增加等待 避免刷新时身份验证出错的同时还请求了其他资源 -->
+      <n-result v-else-if="!$store.state.user.id" status="info" title="请稍等" description="正在验证用户身份"></n-result>
+    </div>
 
-    <!-- 增加等待 避免刷新时身份验证出错的同时还请求了其他资源 -->
-    <n-result v-if="!$store.state.user.id" status="info" title="请稍等" description="正在验证用户身份"></n-result>
 
   </n-layout>
 </template>
@@ -77,7 +79,7 @@ const menuBar = [
     label: "用户",
     key: "",
     children: [
-      { label: "主页", key: "user" },
+      { label: "主页", key:"self" },
       { label: "安全", key: "security" },
     ],
   },
@@ -115,7 +117,7 @@ export default {
     );
     // 验证用户
     axios.get("/u/").then((req) => {
-      this.$store.commit("user", req.data);
+      this.$store.commit("self", req.data);
     }).catch(this.signout);
     return {
       menuBar,

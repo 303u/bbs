@@ -36,23 +36,46 @@ class Items(Base):
         Column("id", CHAR(16), primary_key=1, index=1, default=create_id),
         Column("author", CHAR(16), nullable=0),
         Column("title", String(64), index=1),
+        Column("time", Integer, default=lambda: int(time())),
         Column("ban", Boolean, default=0),
         Column("tag", String(128)),
-        Column("body", TEXT(6500)),
-        Column("time", Integer, default=lambda: int(time())),
+        Column("description", String(200)),
+        Column("content", TEXT(6500)),
+        Column("hits", Integer, default=0),
     )
     id: Column
     author: Column
     title: Column
+    time: Column
     ban: Column
     tag: Column
-    body: Column
-    time: Column
+    description: Column
+    content: Column
+    hits: Column
+
+
+class Info(Base):
+    __table__ = Table(
+        "info",
+        Base.metadata,
+        Column("id", CHAR(16), primary_key=1, index=1, default=create_id),
+        Column("gender", Boolean, default=1),
+        Column("city", String(20)),
+        Column("phone", String(20)),
+        Column("hobby", String(128)),
+        Column("birthday", Integer),
+        Column("motto", String(30)),
+        Column("last_login", String, default=lambda: int(time())),
+        Column("item_count", Integer, default=0),
+    )
+    # id: Column
+    # gender: Column
+    # phone: Column
 
 
 class Comment(Base):
     __table__ = Table(
-        "Comment",
+        "comment",
         Base.metadata,
         Column("id", CHAR(16), primary_key=1, index=1, default=create_id),
         Column("item", CHAR(16), nullable=0, index=1),

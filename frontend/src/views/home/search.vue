@@ -65,8 +65,6 @@
     <!-- 推荐内容 -->
     <IntroVue />
   </n-space>
-
-
 </template>
 
 <script>

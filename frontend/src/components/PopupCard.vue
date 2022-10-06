@@ -4,7 +4,7 @@
   <n-popover trigger="hover" :duration="100">
     <template #trigger>
       <!-- 默认外部显示头像 -->
-      <n-avatar @click="show_user"></n-avatar>
+      <n-avatar @click="show_user()"></n-avatar>
     </template>
 
     <n-card>
@@ -20,7 +20,7 @@
       </template>
       <!-- 其他信息 -->
       <template #action>
-        <n-text> {{ $store.state.user_info[id] }} </n-text>
+        <n-text> {{ $store.state.user_info[id].id }} </n-text>
       </template>
     </n-card>
   </n-popover>
@@ -29,7 +29,6 @@
 <script>
 import axios from "axios";
 export default {
-  name: "PopupCard",
   props: { id: { type: String, default: "" }, },
   data() {
     // 判断是否已加载过此信息
@@ -46,7 +45,7 @@ export default {
   methods: {
     show_user() {
       // 前往用户详情页
-      this.$router.push;
+      if (this.id) this.$router.push({ name: "user", params: { id: this.id } });
     },
   },
 };

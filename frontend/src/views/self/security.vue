@@ -89,7 +89,7 @@
         <n-timeline-item type="error" title="手机号绑定" content="等待完善" />
         <n-timeline-item type="error" title="身份验证" content="等待完善" />
         <n-timeline-item type="info" title="信息完善" content="等待完善" line-type="dashed" />
-        <n-timeline-item  content="等待完善">
+        <n-timeline-item content="等待完善">
           <template #icon>
             <n-icon></n-icon>
           </template>
@@ -138,7 +138,7 @@ export default {
           message: "1-20位长度",
           trigger: ["input", "blur"],
           validator(_, val) {
-            return val.length;
+            return val.length > 0;
           },
         },
         email: {

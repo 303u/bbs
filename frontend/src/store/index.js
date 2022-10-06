@@ -23,18 +23,18 @@ const store = createStore({
                 "zh": zhCN,
                 "ru": ruRU,
                 "en": enUS,
-            }[navigator.language.slice(0, 2)]
+            }[lang]
         },
         locale_d() {
             return {
                 "zh": dateZhCN,
                 "ru": dateRuRU,
                 "en": dateEnUS,
-            }[navigator.language.slice(0, 2)]
+            }[lang]
         },
     },
     mutations: {
-        user(state, take) {
+        self(state, take) {
             state.user = take;
             state.user_info[take.id] = take;
         },

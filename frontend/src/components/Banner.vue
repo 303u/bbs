@@ -27,7 +27,6 @@
 <script>
 import { Link } from "@vicons/ionicons5";
 export default {
-  name: "Banner",
   data() {
     return {
       banner: [

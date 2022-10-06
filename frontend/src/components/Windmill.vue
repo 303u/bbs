@@ -214,7 +214,6 @@
 
 <script>
 export default {
-  name: "Windmill",
   props: {
     cls: {
       type: Boolean,

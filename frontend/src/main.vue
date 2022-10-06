@@ -10,3 +10,5 @@
     </n-dialog-provider>
   </n-config-provider>
 </template>
+
+<script></script>

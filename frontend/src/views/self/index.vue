@@ -1,6 +1,6 @@
 <template>
   <n-space vertical>
-    <n-card id="user" size="large" :bordered="false">
+    <n-card class="user-card" size="large" :bordered="false">
       <!-- 用户名称 -->
       <template #header>{{ $store.state.user.name }}</template>
       <!-- 用户头像 -->
@@ -28,7 +28,7 @@ export default {
   data() {
     return {
       menuBar: [
-        { label: "主页", key: "user", },
+        { label: "主页", key:"self", },
         { label: "安全", key: "security", }
       ],
     };
@@ -44,7 +44,7 @@ export default {
 </script>
 
 <style scoped>
-#user {
+.user-card {
   z-index: 0;
   overflow: hidden;
   background: linear-gradient(45deg,
@@ -52,7 +52,7 @@ export default {
       rgba(0, 170, 255, 0.75) 100%);
 }
 
-#user::after {
+.user-card::after {
   top: 0;
   z-index: -10;
   content: "";
@@ -65,7 +65,7 @@ export default {
   animation: aftera 6s linear infinite;
 }
 
-#user::before {
+.user-card::before {
   top: 0;
   z-index: -10;
   content: "";

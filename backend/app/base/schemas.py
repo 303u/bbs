@@ -47,7 +47,8 @@ class ItemIn(BaseModel):
     """用户项目输入"""
     title: str = Field(..., min_length=1, max_length=64)
     tag: str = Field(None, max_length=128)
-    body: str = Field(None, max_length=6500)
+    content: str = Field(None, max_length=6500)
+    description: str = Field(None, max_length=200)
 
 
 class ItemOut(BaseModel):
@@ -55,9 +56,11 @@ class ItemOut(BaseModel):
     id: str = None
     author: str = None
     title: str = None
-    tag: str = None
-    body: str = None
     time: str = None
+    tag: str = None
+    description: str = None
+    content: str = None
+    hits: int = None
 
     class Config:
         orm_mode = True

@@ -1,0 +1,138 @@
+/* 重构常见markdownc通用css */
+
+/* 常见部件 */
+.markdown {
+    margin: auto;
+    padding: 0 1em;
+}
+
+.markdown img {
+    max-width: 100%;
+}
+
+.markdown h1,
+.markdown h2,
+.markdown h3,
+.markdown h4,
+.markdown h5,
+.markdown h6 {
+    font-weight: bold;
+    padding-bottom: 7px;
+}
+
+.markdown h1 {
+    border-bottom: 1px solid #888;
+    font-size: 28px;
+    line-height: 28px;
+}
+
+.markdown h2 {
+    border-bottom: 1px solid #888;
+    font-size: 24px;
+    line-height: 24px;
+}
+
+.markdown h3 {
+    font-size: 18px;
+    line-height: 18px;
+}
+
+.markdown h4 {
+    font-size: 16px;
+    line-height: 16px;
+}
+
+.markdown h5 {
+    font-size: 14px;
+    line-height: 14px;
+}
+
+.markdown h6 {
+    font-size: 14px;
+    line-height: 14px;
+}
+
+.markdown hr {
+    height: 0.2em;
+    border: 0;
+    color: #fff;
+    background-color: #fff;
+}
+
+.markdown a,
+.markdown a:visited {
+    color: #09f;
+    background-color: inherit;
+    text-decoration: none;
+}
+
+.markdown blockquote,
+.markdown details,
+.markdown table,
+.markdown pre,
+.markdown ul,
+.markdown ol,
+.markdown dl,
+.markdown li,
+.markdown p {
+    margin: 0 0 16px 0;
+}
+
+.markdown blockquote {
+    padding: 0 1em;
+    border-left: .25em solid #888;
+}
+
+/* 代码 */
+.markdown code,
+.markdown kbd,
+.markdown pre {
+    font-family: monospace, monospace;
+    background-color: #8881;
+}
+
+.markdown code,
+.markdown pre {
+    border-radius: 3px;
+}
+
+/* 短代码 */
+.markdown kbd,
+.markdown code {
+    border: none;
+    margin: 0 2px;
+    padding: 3px 5px;
+}
+
+/* 块状代码 */
+.markdown pre {
+    border: none;
+    overflow: auto;
+    padding: 6px 10px;
+    line-height: 1.25em;
+}
+
+.markdown pre>code {
+    border: 0;
+    margin: 0;
+    padding: 0;
+    background-color: #0000;
+}
+
+/* 列表 */
+.markdown table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+
+.markdown th,
+.markdown td {
+    border: 1px solid #8884;
+    padding: 6px 13px;
+}
+
+.markdown th,
+.markdown tr:nth-child(even) {
+    background-color: #8881;
+}

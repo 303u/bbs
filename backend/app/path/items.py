@@ -32,8 +32,10 @@ async def get_item(
     _: models.Users = Depends(check_user),
 ) -> schemas.ItemOut:
     """获取项目内容"""
-    items = db.query(models.Items).filter(
+    items: models.Items = db.query(models.Items).filter(
         models.Items.id == item_id, models.Items.ban == False).first()
+    items.hits += 1
+    db.commit()
     if items:
         return items
     else:

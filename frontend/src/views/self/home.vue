@@ -1,66 +1,8 @@
 <template>
   <n-grid cols="12" item-responsive responsive="self">
-    <!-- 其他信息 -->
-    <!-- <n-timeline-item type="success" title="成功">
-      <template #header>你加入了论坛</template>
-      <n-time :time="Number($store.state.user.id?.substring(0, 10)||0)" :to="new Date().getTime() / 1000"
-        type="relative" unix />
-      <template #footer>
-        <n-time :time="Number($store.state.user.id?.substring(0, 10)||0)" format="yyyy-MM-dd" unix />
-      </template>
-    </n-timeline-item> -->
+    <!-- 用户信息 -->
     <n-gi span="12 700:5 1200:4" id="info">
-      <n-space vertical>
-        <!-- 关联信息 -->
-        <n-card>
-          <n-grid cols="2">
-            <n-gi>
-              <n-statistic tabular-nums>
-                <n-text> 文章数量 </n-text>
-                <n-number-animation show-separator :from="0" :to="data.length" />
-              </n-statistic>
-            </n-gi>
-          </n-grid>
-        </n-card>
-        <!-- 个人信息 -->
-        <n-table>
-          <tbody>
-            <tr>
-              <td> 性别 </td>
-              <td>
-                <n-text depth="3" underline>未完善</n-text>
-              </td>
-            </tr>
-            <tr>
-              <td> 城市 </td>
-              <td>
-                <n-text depth="3" underline>未完善</n-text>
-              </td>
-            </tr>
-            <tr>
-              <td> 诚信 </td>
-              <td> 100 </td>
-            </tr>
-            <tr>
-              <td> 认证 </td>
-              <td>
-                <n-text depth="3" underline>未完善</n-text>
-              </td>
-            </tr>
-            <tr>
-              <td> 活跃 </td>
-              <td>
-                <n-time :time="0" :to="86400000" type="relative" />
-              </td>
-            </tr>
-            <tr>
-              <td colspan="2">
-                <n-button block>修改信息</n-button>
-              </td>
-            </tr>
-          </tbody>
-        </n-table>
-      </n-space>
+      <UserInfoVue />
     </n-gi>
     <!-- 文章 -->
     <n-gi span="12 700:7 1200:8">
@@ -100,11 +42,12 @@
               </template>
               <!-- 大概内容 -->
               <n-ellipsis :line-clamp="2" :tooltip="false" class="item_body">
-                {{ li.body }}
+                {{ li.description }}
               </n-ellipsis>
               <!-- 操作 -->
               <template #action>
                 <n-space>
+                  <!-- 查看 -->
                   <n-button circle tertiary type="info" @click="$router.push('/item/' + li.id)">
                     <template #icon>
                       <n-icon>
@@ -112,6 +55,7 @@
                       </n-icon>
                     </template>
                   </n-button>
+                  <!-- 修改 -->
                   <n-button circle tertiary type="success" @click="$router.push('/write/' + li.id)">
                     <template #icon>
                       <n-icon>
@@ -119,6 +63,7 @@
                       </n-icon>
                     </template>
                   </n-button>
+                  <!-- 删除 -->
                   <n-button circle tertiary type="error" @click="delete_item(li)">
                     <template #icon>
                       <n-icon>
@@ -180,9 +125,7 @@
               </template>
               <!-- 标题 -->
               <template #header>{{ li.title }}</template>
-              <template #description>
-                描述
-              </template>
+              <template #description>{{ $store.state.user_info[id]?.name }}</template>
             </n-thing>
           </n-list-item>
 
@@ -202,6 +145,7 @@
 import axios from "axios";
 import { Add, Reload, TrashOutline, Eye, Pencil } from "@vicons/ionicons5";
 import PopupCardVue from "@/components/PopupCard.vue";
+import UserInfoVue from "@/components/UserInfo.vue";
 export default {
   name: "home",
   data() {
@@ -263,7 +207,7 @@ export default {
       this.history.list = this.history.data.slice((page - 1) * 5, page * 5);
     },
   },
-  components: { Reload, TrashOutline, Add, Eye, Pencil, PopupCardVue }
+  components: { Reload, TrashOutline, Add, Eye, Pencil, PopupCardVue, UserInfoVue }
   // beforeMount() {},
   // beforeUnmount() {},
   // activated() {},
@@ -279,6 +223,7 @@ export default {
   #info {
     margin-right: 7px;
   }
+
   .item_body {
     max-width: 90vw;
   }

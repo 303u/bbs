@@ -15,7 +15,6 @@
 
 <script>
 export default {
-  name: "TagList",
   props: { data: String, },
   data() {
     return {}
