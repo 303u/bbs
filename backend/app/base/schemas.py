@@ -59,14 +59,18 @@ class ItemOut(BaseModel):
     time: str = None
     tag: str = None
     description: str = None
-    content: str = None
     hits: int = None
 
     class Config:
         orm_mode = True
 
 
-class ItemFull(ItemOut):
+class ItemFullOut(ItemOut):
+    """用户项目内容"""
+    content: str = None
+
+
+class ItemFull(ItemFullOut):
     """项目最终模型"""
     ban: bool = None
 

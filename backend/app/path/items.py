@@ -13,30 +13,30 @@ router = APIRouter(
 
 @router.get("/", response_model=list[schemas.ItemOut])
 async def get_items(
-    skip: int = 0, me: bool = False,
+    skip: int = 0, author: str = "",
     db: Session = Depends(get_db),
     user: models.Users = Depends(check_user),
 ) -> list[schemas.ItemOut]:
     """获取项目内容"""
     items = db.query(models.Items).filter(models.Items.ban == False)
-    if me:
-        items = items.filter(models.Items.author == user.id)
+    if author:
+        items = items.filter(models.Items.author == author)
     else:
         items = items.filter(models.Items.author != user.id)
     return items.offset(skip*40).limit(40).all()
 
 
-@router.get("/{item_id}", response_model=schemas.ItemOut)
+@router.get("/{item_id}", response_model=schemas.ItemFullOut)
 async def get_item(
     item_id: str, db: Session = Depends(get_db),
     _: models.Users = Depends(check_user),
-) -> schemas.ItemOut:
+) -> schemas.ItemFullOut:
     """获取项目内容"""
     items: models.Items = db.query(models.Items).filter(
         models.Items.id == item_id, models.Items.ban == False).first()
-    items.hits += 1
-    db.commit()
     if items:
+        items.hits += 1
+        db.commit()
         return items
     else:
         raise HTTPException(404, "项目不存在")

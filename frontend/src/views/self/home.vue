@@ -1,26 +1,28 @@
 <template>
-  <n-grid cols="12" item-responsive responsive="self">
+  <n-grid cols="12" x-gap="7" y-gap="7" item-responsive responsive="self">
     <!-- 用户信息 -->
-    <n-gi span="12 700:5 1200:4" id="info">
+    <n-gi span="12 700:5 1200:4">
       <UserInfoVue />
     </n-gi>
-    <!-- 文章 -->
+
+    <!-- 内容组件 -->
     <n-gi span="12 700:7 1200:8">
       <n-space vertical>
-        <n-list bordered>
+        <!-- 文章 -->
+        <DataListVue :avater="0" :description="0" :url="'/i/'" :author="$store.state.user.id"  ref="DataList">
           <template #header>
             <n-space justify="space-between">
               <n-h3 align-text style="margin-bottom: 0;">仓库文章</n-h3>
               <n-space>
                 <!-- 刷新按钮 -->
-                <n-button circle tertiary type="info" @click="get_data">
+                <n-button circle tertiary type="info" @click="$refs.DataList.get_data()">
                   <template #icon>
                     <n-icon>
                       <Reload />
                     </n-icon>
                   </template>
                 </n-button>
-                <!-- 清空按钮 -->
+                <!-- 新建按钮 -->
                 <n-button circle tertiary type="success" @click="$router.push({name:'write'})">
                   <template #icon>
                     <n-icon>
@@ -31,58 +33,7 @@
               </n-space>
             </n-space>
           </template>
-
-          <n-list-item :key="li" v-for="li of list">
-            <n-thing content-indented>
-              <!-- 标题 -->
-              <template #header>{{ li.title }}</template>
-              <!-- 时间 -->
-              <template #description>
-                <n-time :time="Number(li.time)" unix />
-              </template>
-              <!-- 大概内容 -->
-              <n-ellipsis :line-clamp="2" :tooltip="false" class="item_body">
-                {{ li.description }}
-              </n-ellipsis>
-              <!-- 操作 -->
-              <template #action>
-                <n-space>
-                  <!-- 查看 -->
-                  <n-button circle tertiary type="info" @click="$router.push('/item/' + li.id)">
-                    <template #icon>
-                      <n-icon>
-                        <Eye />
-                      </n-icon>
-                    </template>
-                  </n-button>
-                  <!-- 修改 -->
-                  <n-button circle tertiary type="success" @click="$router.push('/write/' + li.id)">
-                    <template #icon>
-                      <n-icon>
-                        <Pencil />
-                      </n-icon>
-                    </template>
-                  </n-button>
-                  <!-- 删除 -->
-                  <n-button circle tertiary type="error" @click="delete_item(li)">
-                    <template #icon>
-                      <n-icon>
-                        <TrashOutline />
-                      </n-icon>
-                    </template>
-                  </n-button>
-                </n-space>
-              </template>
-            </n-thing>
-          </n-list-item>
-          <!-- 翻页组件 -->
-          <template #footer>
-            <n-space justify="center">
-              <n-pagination :page-slot="5" v-model:page="page" :on-update:page="on_show" :page-size="5"
-                :item-count="data.length" />
-            </n-space>
-          </template>
-        </n-list>
+        </DataListVue>
 
         <!-- 历史浏览记录 -->
         <n-list bordered>
@@ -110,12 +61,13 @@
               </n-space>
             </n-space>
           </template>
-          <n-list-item v-if="!history.list.length">
+
+          <n-list-item v-if="!list.length">
             <n-empty description="空空如也"></n-empty>
           </n-list-item>
 
           <!-- 跳入内容 -->
-          <n-list-item :key="li" v-for="li of history.list" @click="$router.push('/item/' + li.id)">
+          <n-list-item :key="li" v-for="li of list" @click="$router.push('/item/' + li.id)">
             <n-thing content-indented>
               <!-- 头像 -->
               <template #avatar>
@@ -125,14 +77,14 @@
               </template>
               <!-- 标题 -->
               <template #header>{{ li.title }}</template>
-              <template #description>{{ $store.state.user_info[id]?.name }}</template>
+              <template #description>{{ $store.state.user_info[li.author]?.name }}</template>
             </n-thing>
           </n-list-item>
 
           <template #footer>
             <n-space justify="center">
-              <n-pagination :page-slot="5" v-model:page="history.page" :on-update:page="on_history_show" :page-size="5"
-                :item-count="history.data.length" />
+              <n-pagination :page-slot="5" v-model:page="page" :on-update:page="on_history_show" :page-size="5"
+                :item-count="data.length" />
             </n-space>
           </template>
         </n-list>
@@ -142,96 +94,40 @@
 </template>
 
 <script>
-import axios from "axios";
 import { Add, Reload, TrashOutline, Eye, Pencil } from "@vicons/ionicons5";
 import PopupCardVue from "@/components/PopupCard.vue";
 import UserInfoVue from "@/components/UserInfo.vue";
+import DataListVue from "@/components/DataList.vue";
 export default {
-  name: "home",
   data() {
-    axios.get("/i/?me=1").then((req) => {
-      this.data = req.data;
-      this.list = this.data.slice(0, 5);
-      this.lock = !req.data.length < 40;
-    });
     return {
-      data: [],
-      list: [],
+      data: this.$store.state.history,
+      list: this.$store.state.history.slice(0, 5),
       lock: 0,
       page: 1,
-      history: {
-        data: this.$store.state.history,
-        list: this.$store.state.history.slice(0, 5),
-        page: 1,
-      }
     };
   },
   methods: {
-    get_data() {
-      axios.get("/i/?me=1").then((req) => {
-        this.page = 1;
-        this.lock = !req.data.length < 40;
-        this.data = req.data;
-        this.list = this.data.slice(0, 5);
-      });
-    },
-    on_show(page) {
-      this.page = page;
-      if (page >= this.data.length / 5 && !this.lock) {
-        axios.get("/i/?me=1&skip=" + parseInt(page / 8)).then((req) => {
-          // 加入新数据
-          this.data.push(...req.data);
-          // 数据取完末尾锁定
-          this.lock = !req.data.length < 40;
-        });
-      }
-      this.list = this.data.slice((page - 1) * 5, page * 5);
-    },
-    delete_item(item) {
-      axios.delete("/i/" + item.id).then(() => {
-        this.data.splice(this.data.indexOf(item), 1);
-        this.list = this.data.slice((this.page - 1) * 5, this.page * 5);
-      });
-    },
     get_history_data() {
-      this.history.page = 1;
-      this.history.data = this.$store.state.history;
-      this.history.list = this.history.data.slice(0, 5);
+      this.page = 1;
+      this.data = this.$store.state.history;
+      this.list = this.data.slice(0, 5);
     },
     clear_history() {
       this.$store.commit("clear_history");
       this.get_history_data();
     },
     on_history_show(page) {
-      this.history.page = page;
-      this.history.list = this.history.data.slice((page - 1) * 5, page * 5);
+      this.page = page;
+      this.list = this.data.slice((page - 1) * 5, page * 5);
     },
   },
-  components: { Reload, TrashOutline, Add, Eye, Pencil, PopupCardVue, UserInfoVue }
+  components: {
+    Reload, TrashOutline, Add, Eye, Pencil,
+    PopupCardVue, UserInfoVue, DataListVue
+  }
   // beforeMount() {},
   // beforeUnmount() {},
   // activated() {},
 };
 </script>
-
-<style scoped>
-.item_body {
-  max-width: 85vw;
-}
-
-@media (min-width: 748px) {
-  #info {
-    margin-right: 7px;
-  }
-
-  .item_body {
-    max-width: 90vw;
-  }
-}
-
-@media (max-width: 748px) {
-  #info {
-    margin-bottom: 7px;
-  }
-}
-</style>

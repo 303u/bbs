@@ -15,6 +15,26 @@
           <template #header-extra>
             <n-time :time="Number(data.time || 0)" unix />
           </template>
+          <!-- 作者操作 -->
+          <n-space v-if="data.author == user.id">
+            <!-- 修改 -->
+            <n-button circle tertiary type="success" @click="$router.push('/write/' + data.id)">
+              <template #icon>
+                <n-icon>
+                  <Pencil />
+                </n-icon>
+              </template>
+            </n-button>
+            <!-- 删除 -->
+            <n-button circle tertiary type="error" @click="delete_item(data)">
+              <template #icon>
+                <n-icon>
+                  <TrashOutline />
+                </n-icon>
+              </template>
+            </n-button>
+          </n-space>
+          <!-- 尾部信息 -->
           <template #action>
             <n-text>点击量</n-text>
             <n-divider vertical />
@@ -135,7 +155,7 @@
 <script>
 import axios from "axios";
 import { marked } from "marked";
-import { PersonCircle, Star, ThumbsUpSharp, ThumbsDownSharp } from "@vicons/ionicons5";
+import { PersonCircle, Star, Pencil, TrashOutline, ThumbsUpSharp, ThumbsDownSharp } from "@vicons/ionicons5";
 import PopupCard from "@/components/PopupCard.vue";
 import TagList from "@/components/TagList.vue";
 export default {
@@ -184,6 +204,10 @@ export default {
         });
       }
     },
+    delete_item(item) {
+      // 删除文章
+      axios.delete("/i/" + item.id).then(() => { this.$router.back() });
+    },
   },
   // 捕捉路由参数变化
   watch: {
@@ -205,6 +229,10 @@ export default {
       }
     }
   },
-  components: { PersonCircle, Star, ThumbsUpSharp, ThumbsDownSharp, PopupCard, TagList },
+  components: {
+    Star, Pencil, TrashOutline, PersonCircle,
+    ThumbsUpSharp, ThumbsDownSharp,
+    PopupCard, TagList,
+  },
 };
 </script>

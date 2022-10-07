@@ -4,7 +4,8 @@
       <n-input clearable v-model:value="form.username" type="email" maxlength="64" />
     </n-form-item-row>
     <n-form-item-row label="账号密码" path="password">
-      <n-input clearable v-model:value="form.password" type="password" show-password-on="click" maxlength="24" />
+      <n-input clearable v-model:value="form.password" type="password" show-password-on="click" maxlength="24"
+        :input-props="{ autocomplete:false }" />
     </n-form-item-row>
     <n-form-item-row label="保持登录">
       <n-popover trigger="hover">

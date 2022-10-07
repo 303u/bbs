@@ -20,7 +20,7 @@
       </template>
       <!-- 其他信息 -->
       <template #action>
-        <n-text> {{ $store.state.user_info[id].id }} </n-text>
+        <n-text> {{ $store.state.user_info[id]?.id }} </n-text>
       </template>
     </n-card>
   </n-popover>

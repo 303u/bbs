@@ -23,7 +23,8 @@
               </n-collapse-transition>
               <n-collapse-transition :show="a.p">
                 <n-form-item-row label="输入新密码" path="password">
-                  <n-input v-model:value="u.password" type="password" show-password-on="click" maxlength="24" />
+                  <n-input v-model:value="u.password" type="password" show-password-on="click" maxlength="24"
+                    :input-props="{ autocomplete:false }" />
                 </n-form-item-row>
               </n-collapse-transition>
               <n-collapse-transition :show="a.p || a.e">
