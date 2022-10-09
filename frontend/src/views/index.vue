@@ -116,7 +116,7 @@ export default {
       }
     );
     // 验证用户
-    axios.get("/u/").then((req) => {
+    axios.get("/users/").then((req) => {
       this.$store.commit("self", req.data);
     }).catch(this.signout);
     return {

@@ -9,7 +9,7 @@ from ..core.dependence import Session, get_db, check_user
 
 
 router = APIRouter(
-    prefix="/u",
+    prefix="/users",
     tags=["users"],
 )
 
@@ -28,25 +28,31 @@ async def create_user(
     db: Session = Depends(get_db),
 ) -> schemas.Msg:
     """创建新用户"""
-    if db.query(models.Users).filter(models.Users.email==data.email).first():
+    if db.query(models.Users).filter(models.Users.email == data.email).first():
         raise HTTPException(400, "请更换邮箱")
     data.password = hasher(data.password)
 
     try:
         user = models.Users(**data.dict())
+        # 创建用户
         db.add(user)
         db.commit()
         # 刷新用户信息
         db.refresh(user)
-    except SQLAlchemyError:
-        return {"detail": "请重试"}
-
-    # TODO 校验邮箱 绑定更多用户信息到其他表
-    try:
+        # 发送邮件到用户
         new_account(data.email, data.name)
+    except SQLAlchemyError:
+        # id 碰撞
+        return {"detail": "繁忙请重试"}
     except Exception:
+        # 创建成功但邮箱为空
         db.delete(user)
+        db.commit()
+        return {"detail": "无法访问的邮箱"}
 
+    # 默认创建用户空信息
+    db.add(models.Info(id=user.id))
+    db.commit()
     return {"detail": "创建成功"}
 
 
@@ -83,6 +89,8 @@ async def cancel_user(
         db.delete(item)
     db.query(models.Comment).filter(
         models.Items.author == user.id).delete()
+    db.query(models.Info).filter(
+        models.Info.id == user.id).delete()
     db.delete(user)
     db.commit()
     return {"detail": "操作成功"}

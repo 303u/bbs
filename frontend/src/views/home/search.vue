@@ -41,7 +41,7 @@ export default {
   data() {
     let keyword = this.$route.params.keyword || ""
     return {
-      url: keyword ? "/i/t/" + keyword : "/i/",
+      url: keyword ? "/items/k/" + keyword : "/items/",
       words: keyword.split(" ").join(","),
       keywords: keyword,
     };
@@ -50,10 +50,10 @@ export default {
     search() {
       if (this.keywords) {
         this.words = this.keywords.split(" ").join(",");
-        this.url = "/i/t/" + this.keyword
+        this.url = "/items/k/" + this.keyword
       } else {
         this.words = "";
-        this.url = "/i/";
+        this.url = "/items/";
       };
     },
   },

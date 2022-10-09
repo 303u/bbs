@@ -55,7 +55,7 @@ export default {
         /^\w{2,32}\@\w+\.\w+$/.test(this.u.email) &&
         this.u.password.length > 5
       ) {
-        axios.post("/u/", this.u).then(() => {
+        axios.post("/users/", this.u).then(() => {
           this.$router.push({ name: "login" })
         });
       }

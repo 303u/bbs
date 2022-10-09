@@ -6,7 +6,7 @@ from ..core.dependence import Session, get_db, check_user, check_item
 
 
 router = APIRouter(
-    prefix="/i",
+    prefix="/items",
     tags=["items"],
 )
 
@@ -50,6 +50,10 @@ async def create_item(
 ) -> schemas.Msg:
     """创建数据内容"""
     db.add(models.Items(**data.dict(), author=user.id))
+    # 增加计数
+    info: models.Info = db.query(models.Info).filter(
+        models.Info.id == user.id).first()
+    info.item_count += 1
     db.commit()
     return {"detail": "操作成功"}
 
@@ -85,11 +89,14 @@ async def delete_item(
         raise HTTPException(400, "权限不足")
     db.query(models.Comment).filter(models.Comment.item == item.id).delete()
     db.delete(item)
+    info: models.Info = db.query(models.Info).filter(
+        models.Info.id == user.id).first()
+    info.item_count -= 1
     db.commit()
     return {"detail": "操作成功"}
 
 
-@router.get("/t/{key_words}", response_model=list[schemas.ItemOut])
+@router.get("/k/{key_words}", response_model=list[schemas.ItemOut])
 async def take_item(
     key_words: str, skip: int = 0,
     db: Session = Depends(get_db),

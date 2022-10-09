@@ -160,11 +160,11 @@ import PopupCard from "@/components/PopupCard.vue";
 import TagList from "@/components/TagList.vue";
 export default {
   data() {
-    axios.get("/i/" + this.$route.params.id).then((req) => {
+    axios.get("/items/" + this.$route.params.id).then((req) => {
       this.data = req.data;
       // 加入历史浏览
       this.$store.commit("add_history", req.data);
-      axios.get("/t/" + this.$route.params.id).then((req) => {
+      axios.get("/comment/" + this.$route.params.id).then((req) => {
         // 获取评论
         this.comment = req.data;
       });
@@ -184,7 +184,7 @@ export default {
     create_comment() {
       // 新建评论
       if (0 < this.c.body.length < 301) {
-        axios.post("/t/", { ...this.c, item: this.data.id }).then(() => {
+        axios.post("/comment/", { ...this.c, item: this.data.id }).then(() => {
           this.reload_comment();
           this.c.body = this.c.reply = "";
         });
@@ -192,21 +192,21 @@ export default {
     },
     reload_comment() {
       // 重载评论
-      axios.get("/t/" + this.data.id).then((req) => {
+      axios.get("/comment/" + this.data.id).then((req) => {
         this.comment = req.data;
       });
     },
     delete_comment(talk) {
       // 删除评论
       if (talk.author == this.user.id) {
-        axios.delete("/t/" + talk.id).then(() => {
+        axios.delete("/comment/" + talk.id).then(() => {
           this.reload_comment();
         });
       }
     },
     delete_item(item) {
       // 删除文章
-      axios.delete("/i/" + item.id).then(() => { this.$router.back() });
+      axios.delete("/items/" + item.id).then(() => { this.$router.back() });
     },
   },
   // 捕捉路由参数变化
@@ -214,11 +214,11 @@ export default {
     $route() {
       // 如果跳出页面则不执行信息抓取
       if (this.$route.params.id && this.$route.name == "item") {
-        axios.get("/i/" + this.$route.params.id).then((req) => {
+        axios.get("/items/" + this.$route.params.id).then((req) => {
           this.data = req.data;
           // 加入历史浏览
           this.$store.commit("add_history", req.data);
-          axios.get("/t/" + this.$route.params.id).then((req) => {
+          axios.get("/comment/" + this.$route.params.id).then((req) => {
             // 获取评论
             this.comment = req.data;
           });

@@ -1,3 +1,4 @@
+import time
 from secrets import token_hex
 from fastapi import APIRouter, HTTPException, Depends, Header
 from fastapi.security import OAuth2PasswordRequestForm
@@ -9,7 +10,7 @@ from ..core.dependence import Session, get_db
 
 
 router = APIRouter(
-    prefix="/l",
+    prefix="/login",
     tags=["login"],
 )
 
@@ -27,6 +28,11 @@ async def login_access(
         raise HTTPException(400, "账号或密码错误")
     elif not user.active:
         raise HTTPException(400, "已被封禁用户")
+    # 更新登录时间
+    info: models.Info = db.query(models.Info).filter(
+        models.Info.id == user.id).first()
+    info.last_login = int(time.time())
+    db.commit()
     return {"access_token": token(user.id)}
 
 

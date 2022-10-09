@@ -1,24 +1,29 @@
 {
     "compilerOptions": {
         "jsx": "preserve",
-        "target": "ES6",
-        "module": "commonjs",
+        "target": "ESNext",
+        "module": "ESNext",
         "baseUrl": ".",
         "emitDecoratorMetadata": true,
         "experimentalDecorators": true,
         "noImplicitAny": false,
-        "incremental": true,
         "allowJs": true,
         "checkJs": false,
         "sourceMap": false,
-        "declarationMap": false,
         "declaration": false,
+        "declarationMap": false,
         "removeComments": true,
         "paths": {
             "@/*": [
                 "src/*",
             ],
         },
+        "lib": [
+            "esnext",
+            "dom",
+            "dom.iterable",
+            "scripthost"
+        ]
     },
     "exclude": [
         "node_modules",
@@ -26,5 +31,5 @@
     ],
     "include": [
         "src/**/*",
-    ]
+    ],
 }

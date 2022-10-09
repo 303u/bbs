@@ -6,7 +6,7 @@ from ..core.dependence import Session, get_db, check_admin
 
 
 router = APIRouter(
-    prefix="/a",
+    prefix="/admin",
     tags=["admin"],
 )
 

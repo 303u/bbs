@@ -2,14 +2,31 @@
   <n-grid cols="12" x-gap="7" y-gap="7" item-responsive responsive="self">
     <!-- 用户信息 -->
     <n-gi span="12 700:5 1200:4">
-      <UserInfoVue />
+      <n-space vertical>
+        <!-- 格言 -->
+        <n-card>
+          <n-text v-if="!edit">
+            <n-text v-if="$refs.info?.info.motto">{{ $refs.info.info.motto }}</n-text>
+            <n-text v-else depth="3" underline>这位用户很懒，没有留言哦。</n-text>
+          </n-text>
+          <n-input v-else type="textarea" v-model:value="motto" :autosize="{minRows: 1}" />
+          <n-divider />
+          <n-space justify="space-around" v-if="edit">
+            <n-button @click="edit = 0">取消</n-button>
+            <n-button @click="commit_motto">提交</n-button>
+          </n-space>
+          <n-button block @click="edit = 1" v-else>修改格言</n-button>
+        </n-card>
+        <!-- 其他信息 -->
+        <UserInfoVue :id="$store.state.user.id" ref="info" />
+      </n-space>
     </n-gi>
 
     <!-- 内容组件 -->
     <n-gi span="12 700:7 1200:8">
       <n-space vertical>
         <!-- 文章 -->
-        <DataListVue :avater="0" :description="0" :url="'/i/'" :author="$store.state.user.id"  ref="DataList">
+        <DataListVue :avater="0" :description="0" :url="'/items/'" :author="$store.state.user.id" ref="DataList">
           <template #header>
             <n-space justify="space-between">
               <n-h3 align-text style="margin-bottom: 0;">仓库文章</n-h3>
@@ -94,6 +111,7 @@
 </template>
 
 <script>
+import axios from 'axios';
 import { Add, Reload, TrashOutline, Eye, Pencil } from "@vicons/ionicons5";
 import PopupCardVue from "@/components/PopupCard.vue";
 import UserInfoVue from "@/components/UserInfo.vue";
@@ -105,6 +123,8 @@ export default {
       list: this.$store.state.history.slice(0, 5),
       lock: 0,
       page: 1,
+      edit: 0,
+      motto: "",
     };
   },
   methods: {
@@ -121,11 +141,15 @@ export default {
       this.page = page;
       this.list = this.data.slice((page - 1) * 5, page * 5);
     },
+    commit_motto() {
+      this.edit = 0;
+      axios.put("/info/", { motto: this.motto });
+    }
   },
   components: {
     Reload, TrashOutline, Add, Eye, Pencil,
     PopupCardVue, UserInfoVue, DataListVue
-  }
+  },
   // beforeMount() {},
   // beforeUnmount() {},
   // activated() {},

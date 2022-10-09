@@ -62,15 +62,22 @@ class Info(Base):
         Column("gender", Boolean, default=1),
         Column("city", String(20)),
         Column("phone", String(20)),
-        Column("hobby", String(128)),
-        Column("birthday", Integer),
+        Column("hobby", String(20)),
+        Column("birthday", Integer, default=0),
         Column("motto", String(30)),
-        Column("last_login", String, default=lambda: int(time())),
+        Column("last_login", Integer, default=lambda: int(time())),
         Column("item_count", Integer, default=0),
     )
-    # id: Column
-    # gender: Column
-    # phone: Column
+    id: Column
+    gender: Column
+    city: Column
+    phone: Column
+    hobby: Column
+    phone: Column
+    birthday: Column
+    motto: Column
+    last_login: Column
+    item_count: Column
 
 
 class Comment(Base):

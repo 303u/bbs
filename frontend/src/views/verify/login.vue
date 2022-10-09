@@ -103,7 +103,7 @@ export default {
       form.append("password", this.form.password);
       this.form.username = this.form.password = "";
       axios
-        .post("/l/", form)
+        .post("/login/", form)
         .then((req) => {
           // 保存身份token
           (this.keep ? localStorage : sessionStorage).token = req.data.access_token;

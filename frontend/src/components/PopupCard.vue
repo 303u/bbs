@@ -36,7 +36,7 @@ export default {
       // 如果没有，塞入默认信息防止多次请求
       this.$store.commit("insert_info", { id: this.id });
       // 发送请求获取默认数据
-      axios.get("/u/" + this.id).then((re) => {
+      axios.get("/users/" + this.id).then((re) => {
         this.$store.commit("insert_info", re.data);
       });
     }

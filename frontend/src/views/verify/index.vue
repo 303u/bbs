@@ -60,7 +60,7 @@ export default {
       (req) => {
         ldb.finish();
         if (req.data.detail) msg.success(req.data.detail);
-        else if (req.config.url == "/l/") msg.success("登录成功");
+        else if (req.config.url == "/login/") msg.success("登录成功");
         return req;
       },
       (err) => {

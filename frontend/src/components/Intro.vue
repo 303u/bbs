@@ -29,7 +29,7 @@ import axios from 'axios';
 import PopupCardVue from './PopupCard.vue';
 export default {
   data() {
-    // axios.get("/i/").then((req) => {
+    // axios.get("/items/").then((req) => {
     //     // 载入数据
     //     this.data = req.data;
     // });

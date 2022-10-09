@@ -108,7 +108,7 @@
         </n-progress>
       </n-space>
       <n-h2 prefix="bar" type="error">请完善信息</n-h2>
-      <n-button block>快速前往</n-button>
+      <n-button block @click="$router.push({name:'self'})">快速前往</n-button>
     </n-gi>
     <!-- 日历 -->
     <n-gi span="0 700:12">
@@ -171,7 +171,7 @@ export default {
   },
   methods: {
     cancel_account() {
-      axios.delete("/u/").then(() => {
+      axios.delete("/users/").then(() => {
         this.current = 3;
         // 清空用户数据
         sessionStorage.clear();
@@ -183,7 +183,7 @@ export default {
       });
     },
     get_token() {
-      axios.post("/u/t/").then((req) => {
+      axios.post("/users/k/").then((req) => {
         this.code = req.data.code;
       });
     },
@@ -199,7 +199,7 @@ export default {
       } else return;
       let name = this.u.name;
       axios
-        .put("/u/?token=" + this.u.token, this.u, {
+        .put("/users/?token=" + this.u.token, this.u, {
           headers: { code: this.code },
         })
         .then(() => {

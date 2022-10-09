@@ -80,7 +80,7 @@ export default {
   data() {
     let data = { title: "", content: "", description: "", tag: [] };
     if (this.$route.params.id) {
-      axios.get("/i/" + this.$route.params.id).then((req) => {
+      axios.get("/items/" + this.$route.params.id).then((req) => {
         // 判断是否为作者
         if (req.data.author != this.$store.state.user.id) {
           this.$router.back();
@@ -118,10 +118,10 @@ export default {
         };
         if (this.$route.params.id) {
           // 如果为修改
-          axios.put("/i/" + this.$route.params.id, { ...this.data, tag }).then(() => this.suc = 1);
+          axios.put("/items/" + this.$route.params.id, { ...this.data, tag }).then(() => this.suc = 1);
         } else {
           // 如果为新建
-          axios.post("/i/", { ...this.data, tag }).then(() => this.suc = 1)
+          axios.post("/items/", { ...this.data, tag }).then(() => this.suc = 1)
         };
       }
     },

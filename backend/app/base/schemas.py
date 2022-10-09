@@ -75,6 +75,25 @@ class ItemFull(ItemFullOut):
     ban: bool = None
 
 
+# 用户详细信息
+class InfoIn(BaseModel):
+    """用户详细信息输入"""
+    gender: bool = None
+    city: str = None
+    hobby: str = None
+    birthday: int = None
+    motto: str = None
+
+
+class InfoOut(InfoIn):
+    """用户详细信息输出"""
+    last_login: int = None
+    item_count: int = None
+
+    class Config:
+        orm_mode = True
+
+
 # 评论系列
 class CommentIn(BaseModel):
     """评论模型输入"""

@@ -5,7 +5,7 @@ from ..core.dependence import Session, get_db, check_user
 
 
 router = APIRouter(
-    prefix="/t",
+    prefix="/comment",
     tags=["comment"],
 )
 

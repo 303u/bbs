@@ -74,7 +74,7 @@ export default {
     footer: { default: true },
     action: { default: true },
     header: { default: true },
-    url: { type: String, default: "/i/" },
+    url: { type: String, default: "/items/" },
     author: { type: String, default: "" },
   },
   data() {

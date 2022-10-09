@@ -6,6 +6,7 @@ from . import login
 from . import users
 from . import items
 from . import admin
+from . import info
 from . import comment
 
 
@@ -17,4 +18,5 @@ class Router(APIRouter):
         self.include_router(users.router)
         self.include_router(items.router)
         self.include_router(admin.router)
+        self.include_router(info.router)
         self.include_router(comment.router)

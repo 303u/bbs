@@ -60,7 +60,7 @@ export default {
   methods: {
     recovery() {
       if (/^\w{2,32}\@\w+\.\w+$/.test(this.u.email)) {
-        axios.post("/l/r/" + this.u.email).then((req) => {
+        axios.post("/login/r/" + this.u.email).then((req) => {
           this.code = req.data.code;
         });
       }
@@ -71,7 +71,7 @@ export default {
         /^\w{2,32}\@\w+\.\w+$/.test(this.u.email) &&
         this.u.password.length > 5
       ) {
-        axios.post("/l/t/" + this.u.token, this.u, {
+        axios.post("/login/t/" + this.u.token, this.u, {
           headers: { code: this.code },
         }).then(() => {
           this.$router.push({ name: "login" })
