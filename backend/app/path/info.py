@@ -14,17 +14,22 @@ router = APIRouter(
 async def user_info(
     user_id: str,
     db: Session = Depends(get_db),
-    user: models.Users = Depends(check_user),
+    _: models.Users = Depends(check_user),
 ) -> schemas.InfoOut:
     """获取用户信息"""
-    info:models.Info = db.query(models.Info).filter(
+    info: models.Info = db.query(models.Info).filter(
         models.Info.id == user_id).first()
     if info:
         return info
-    elif user_id == user.id:
-        db.add(models.Info(id=user_id))
+    elif db.query(models.Users).filter(
+            models.Users.id == user_id).first():
+        # 若用户存在
+        info = models.Info(id=user_id)
+        db.add(info)
         db.commit()
-    raise HTTPException(404)
+        db.refresh(info)
+        return info
+    raise HTTPException(404, "用户信息不存在")
 
 
 @router.put("/", response_model=schemas.Msg)
@@ -37,7 +42,7 @@ async def update_user(
     db.query(models.Info).filter(models.Info.id == user.id).update(
         data.dict(exclude_defaults=True))
     db.commit()
-    return {"detail": "操作成功"}
+    return {}
 
 
 @router.patch("/phone", response_model=schemas.Msg)
@@ -50,4 +55,4 @@ async def update_phone(
     db.query(models.Info).filter(models.Info.id == user.id).update(
         {"phone": data})
     db.commit()
-    return {"detail": "操作成功"}
+    return {}

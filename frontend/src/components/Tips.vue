@@ -21,7 +21,8 @@
     </template>
     <!-- 内容 -->
     <n-alert type="info">
-      <n-skeleton text :repeat="6" />
+      <n-text>仅供展示，不做商业用途。</n-text>
+      <n-skeleton text :repeat="2" />
       <n-skeleton text style="width: 60%" />
     </n-alert>
   </n-card>

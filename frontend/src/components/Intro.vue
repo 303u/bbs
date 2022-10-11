@@ -9,7 +9,7 @@
           <n-thing>
             <!-- 头像 -->
             <template #avatar>
-              <PopupCardVue :id="li.author" />
+              <PopupCardVue :id="li.id" />
             </template>
             <!-- 内容 -->
             <n-skeleton text :repeat="2" />
@@ -29,13 +29,11 @@ import axios from 'axios';
 import PopupCardVue from './PopupCard.vue';
 export default {
   data() {
-    // axios.get("/items/").then((req) => {
-    //     // 载入数据
-    //     this.data = req.data;
-    // });
+    axios.get("/intro/user").then((req) => {
+        this.data = req.data;
+    });
     return {
-      data: [{}, {}, {}, {}, {}, {}]
-      // data: []
+      data: [{}, {}, {}, {}]
     }
   },
   components: {

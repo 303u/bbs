@@ -65,4 +65,4 @@ async def reset_password(
     user.password = hasher(user_in.password)
     db.commit()
     recovery_success(user.email)
-    return {"detail": "操作成功"}
+    return {}

@@ -7,7 +7,7 @@ from fastapi import security, HTTPException
 from . import Config
 
 # OAuth2授权
-reusable_oauth2 = security.OAuth2PasswordBearer(tokenUrl="/l")
+reusable_oauth2 = security.OAuth2PasswordBearer(tokenUrl="/login")
 
 # 32位的随机加密钥匙
 TOKEN_KEY = secrets.token_urlsafe(32)

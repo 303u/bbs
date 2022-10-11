@@ -2,11 +2,12 @@
     "compilerOptions": {
         "jsx": "preserve",
         "target": "ESNext",
-        "module": "ESNext",
+        "module": "CommonJS",
         "baseUrl": ".",
         "emitDecoratorMetadata": true,
         "experimentalDecorators": true,
         "noImplicitAny": false,
+        "incremental": true,
         "allowJs": true,
         "checkJs": false,
         "sourceMap": false,

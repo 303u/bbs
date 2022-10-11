@@ -32,7 +32,7 @@ async def insert(
     db.add(models.Comment(**user_in.dict(
         exclude_defaults=True), author=user.id))
     db.commit()
-    return {"detail": "操作成功"}
+    return {}
 
 
 @ router.delete("/{talk_id}", response_model=schemas.Msg)
@@ -49,4 +49,4 @@ async def delete(
         raise HTTPException(403, "权限不足")
     db.delete(talk)
     db.commit()
-    return {"detail": "操作成功"}
+    return {}

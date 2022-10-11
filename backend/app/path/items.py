@@ -26,16 +26,27 @@ async def get_items(
     return items.offset(skip*40).limit(40).all()
 
 
+@router.get("/hits")
+async def check_hits(
+    db: Session = Depends(get_db),
+    user: models.Users = Depends(check_user),
+) -> None:
+    """检查有效点击"""
+    # TODO 时间校验推算大约阅读时间
+    return
+
+
 @router.get("/{item_id}", response_model=schemas.ItemFullOut)
 async def get_item(
     item_id: str, db: Session = Depends(get_db),
-    _: models.Users = Depends(check_user),
+    user: models.Users = Depends(check_user),
 ) -> schemas.ItemFullOut:
     """获取项目内容"""
     items: models.Items = db.query(models.Items).filter(
         models.Items.id == item_id, models.Items.ban == False).first()
     if items:
-        items.hits += 1
+        if items.author != user.id:
+            items.hits += 1
         db.commit()
         return items
     else:
@@ -55,7 +66,7 @@ async def create_item(
         models.Info.id == user.id).first()
     info.item_count += 1
     db.commit()
-    return {"detail": "操作成功"}
+    return {}
 
 
 @router.put("/{item_id}", response_model=schemas.Msg)
@@ -75,7 +86,7 @@ async def update_item(
     db.query(models.Items).filter(
         models.Items.id == item.id).update(update_data)
     db.commit()
-    return {"detail": "操作成功"}
+    return {}
 
 
 @router.delete("/{item_id}", response_model=schemas.Msg)
@@ -93,11 +104,11 @@ async def delete_item(
         models.Info.id == user.id).first()
     info.item_count -= 1
     db.commit()
-    return {"detail": "操作成功"}
+    return {}
 
 
 @router.get("/k/{key_words}", response_model=list[schemas.ItemOut])
-async def take_item(
+async def search_item(
     key_words: str, skip: int = 0,
     db: Session = Depends(get_db),
     _: models.Users = Depends(check_user),

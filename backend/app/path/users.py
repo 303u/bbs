@@ -32,28 +32,28 @@ async def create_user(
         raise HTTPException(400, "请更换邮箱")
     data.password = hasher(data.password)
 
-    try:
-        user = models.Users(**data.dict())
-        # 创建用户
-        db.add(user)
-        db.commit()
-        # 刷新用户信息
-        db.refresh(user)
-        # 发送邮件到用户
-        new_account(data.email, data.name)
-    except SQLAlchemyError:
-        # id 碰撞
-        return {"detail": "繁忙请重试"}
-    except Exception:
-        # 创建成功但邮箱为空
-        db.delete(user)
-        db.commit()
-        return {"detail": "无法访问的邮箱"}
+    while user := models.Users(**data.dict()):
+        try:
+            # 创建用户
+            db.add(user)
+            db.commit()
+            # 刷新用户信息
+            db.refresh(user)
+            # 发送邮件到用户
+            new_account(data.email, data.name)
+        except SQLAlchemyError:
+            # id 碰撞
+            continue
+        except Exception:
+            # 创建成功但邮箱无法收件
+            db.delete(user)
+            db.commit()
+            return {"detail": "无法访问的邮箱"}
 
     # 默认创建用户空信息
     db.add(models.Info(id=user.id))
     db.commit()
-    return {"detail": "创建成功"}
+    return {}
 
 
 @router.put("/", response_model=schemas.Msg)
@@ -72,7 +72,7 @@ async def update_user(
     data = data.dict(exclude_defaults=True) | {"info": None}
     db.query(models.Users).filter(models.Users.id == user.id).update(data)
     db.commit()
-    return {"detail": "操作成功"}
+    return {}
 
 
 @router.delete("/", response_model=schemas.Msg)
@@ -93,7 +93,7 @@ async def cancel_user(
         models.Info.id == user.id).delete()
     db.delete(user)
     db.commit()
-    return {"detail": "操作成功"}
+    return {}
 
 
 @router.post("/t", response_model=schemas.VerifyCode)

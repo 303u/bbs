@@ -99,4 +99,27 @@ class Comment(Base):
     time: Column
 
 
+class Banner(Base):
+    __table__ = Table(
+        "banner",
+        Base.metadata,
+        Column("id", Integer, primary_key=1),
+        Column("url", String(120), nullable=0),
+        Column("img", String(120)),
+        Column("title", String(20)),
+        Column("start", Integer, default=lambda: int(time())),
+        Column("end", Integer, default=0),
+        Column("hits", Integer, default=0),
+        Column("description", String(300)),
+    )
+    id: Column
+    url: Column
+    img: Column
+    title: Column
+    start: Column
+    end: Column
+    hits: Column
+    description: Column
+
+
 Base.metadata.create_all(engine)

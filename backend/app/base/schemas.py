@@ -8,7 +8,7 @@ class Token(BaseModel):
 
 class Msg(BaseModel):
     """返回响应信息"""
-    detail: str = None
+    detail: str = "done"
 
 
 class VerifyCode(Msg):
@@ -110,6 +110,21 @@ class CommentOut(BaseModel):
     reply: str = None
     body: str = None
     time: str = None
+
+    class Config:
+        orm_mode = True
+
+
+# 推广项目
+class Banner(BaseModel):
+    """推广项目模型"""
+    url: str = None
+    img: str = None
+    title: str = None
+    start: int = None
+    end: int = None
+    hits: int = None
+    description: str = None
 
     class Config:
         orm_mode = True

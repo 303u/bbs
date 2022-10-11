@@ -114,7 +114,7 @@ export default {
       ) {
         // 如果介绍为空
         if (!this.data.description) {
-          this.data.description = this.data.content.replace(/[`#$()<>|]/g, "").substring(0, 200)
+          this.data.description = this.data.content.replace(/[`#$()<>*-|]/g, "").substring(0, 200);
         };
         if (this.$route.params.id) {
           // 如果为修改
