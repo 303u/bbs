@@ -14,15 +14,15 @@ router = APIRouter(
 async def user_info(
     user_id: str,
     db: Session = Depends(get_db),
-    _: models.Users = Depends(check_user),
+    _: models.User = Depends(check_user),
 ) -> schemas.InfoOut:
     """获取用户信息"""
     info: models.Info = db.query(models.Info).filter(
         models.Info.id == user_id).first()
     if info:
         return info
-    elif db.query(models.Users).filter(
-            models.Users.id == user_id).first():
+    elif db.query(models.User).filter(
+            models.User.id == user_id).first():
         # 若用户存在
         info = models.Info(id=user_id)
         db.add(info)
@@ -36,7 +36,7 @@ async def user_info(
 async def update_user(
     data: schemas.InfoIn,
     db: Session = Depends(get_db),
-    user: models.Users = Depends(check_user),
+    user: models.User = Depends(check_user),
 ) -> schemas.Msg:
     """更新用户信息"""
     db.query(models.Info).filter(models.Info.id == user.id).update(
@@ -49,7 +49,7 @@ async def update_user(
 async def update_phone(
     data: str = Body(None),
     db: Session = Depends(get_db),
-    user: models.Users = Depends(check_user),
+    user: models.User = Depends(check_user),
 ) -> schemas.Msg:
     """更新联系电话"""
     db.query(models.Info).filter(models.Info.id == user.id).update(

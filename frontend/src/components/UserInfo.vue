@@ -79,29 +79,40 @@
 import axios from 'axios';
 export default {
   props: {
-    id: {
-      type: String,
-      default: ""
-    },
+    id: { default: "" },
   },
   data() {
+    let info = {
+      name: "",
+      motto: "",
+
+      gender: true,
+      city: "",
+      hobby: "",
+      birthday: "",
+
+      last_login: 0,
+      item_count: 0,
+    }, info_base = { ...info };
     // 获取用户信息
-    axios.get("/info/" + this.id).then((re) => {
-      this.info = { ...re.data };
-      this.info_base = { ...re.data };
-    });
+    if (!this.$store.state.user_info[this.id] && this.id) {
+      // 如果没有，塞入默认信息防止多次请求
+      this.$store.commit("insert_info", { id: this.id });
+      // 发送请求获取默认数据
+      axios.get("/info/" + this.id).then((re) => {
+        this.$store.commit("insert_info", re.data);
+        this.info = { ...re.data };
+        this.info_base = { ...re.data };
+      });
+    } else {
+      // 存在数据则免取
+      info = { ...this.$store.state.user_info[this.id] };
+      info_base = { ...this.$store.state.user_info[this.id] };
+    }
     return {
       edit: false,
-      info: {
-        gender: true,
-        city: "",
-        hobby: "",
-        birthday: "",
-        motto: "",
-        last_login: 0,
-        item_count: 0,
-      },
-      info_base: {},
+      info,
+      info_base,
     }
   },
   methods: {

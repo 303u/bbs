@@ -11,7 +11,5 @@ if __name__ == "__main__":
             key, val = i.split("=")
             environ[key] = val
 
-    run(  # trace/info/warning/error
-        "app:app", log_level="info",
-        access_log=False, reload=True
-    )
+    # trace/info/warning/error
+    run("app:app", log_level="info", reload=True)

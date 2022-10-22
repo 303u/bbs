@@ -21,9 +21,9 @@ async def login_access(
     form: OAuth2PasswordRequestForm = Depends(),
 ) -> schemas.Token:
     """OAuth2 兼容令牌登录获取访问令牌以供将来请求使用"""
-    user: models.Users = db.query(models.Users).filter(
-        models.Users.email == form.username,
-        models.Users.password == hasher(form.password)).first()
+    user: models.User = db.query(models.User).filter(
+        models.User.email == form.username,
+        models.User.password == hasher(form.password)).first()
     if not user:
         raise HTTPException(400, "账号或密码错误")
     elif not user.active:
@@ -42,8 +42,8 @@ async def recovery(
 ) -> schemas.Msg:
     """发送验证序列到邮箱"""
     code = token_hex(4)
-    user: models.Users = db.query(models.Users).filter(
-        models.Users.email == email).first()
+    user: models.User = db.query(models.User).filter(
+        models.User.email == email).first()
     if not user:
         raise HTTPException(404, "不存在此用户")
     elif not user.active:
@@ -58,8 +58,8 @@ async def reset_password(
     db: Session = Depends(get_db),
 ) -> schemas.Msg:
     """重设密码"""
-    user: models.Users = db.query(models.Users).filter(
-        models.Users.id == verify_token(code, token)).first()
+    user: models.User = db.query(models.User).filter(
+        models.User.id == verify_token(code, token)).first()
     if not user or not user_in.password:
         raise HTTPException(404, "恶意行为")
     user.password = hasher(user_in.password)

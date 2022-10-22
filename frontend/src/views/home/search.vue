@@ -50,7 +50,7 @@ export default {
     search() {
       if (this.keywords) {
         this.words = this.keywords.split(" ").join(",");
-        this.url = "/items/k/" + this.keyword
+        this.url = "/items/k/" + this.keywords
       } else {
         this.words = "";
         this.url = "/items/";

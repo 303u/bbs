@@ -6,7 +6,7 @@
         <!-- 格言 -->
         <n-card>
           <n-text v-if="!edit">
-            <n-text v-if="$refs.info?.info.motto">{{ $refs.info.info.motto }}</n-text>
+            <n-text v-if="$store.state.user.motto">{{ $store.state.user.motto }}</n-text>
             <n-text v-else depth="3" underline>这位用户很懒，没有留言哦。</n-text>
           </n-text>
           <n-input v-else type="textarea" v-model:value="motto" :autosize="{minRows: 1}" />
@@ -18,7 +18,7 @@
           <n-button block @click="edit = 1" v-else>修改格言</n-button>
         </n-card>
         <!-- 其他信息 -->
-        <UserInfoVue :id="$store.state.user.id" ref="info" />
+        <UserInfoVue :id="$store.state.user.id" />
       </n-space>
     </n-gi>
 
@@ -143,7 +143,11 @@ export default {
     },
     commit_motto() {
       this.edit = 0;
-      axios.put("/info/", { motto: this.motto });
+      axios.put("/info/", { motto: this.motto }).then(() => {
+        this.$store.state.user.motto = this.motto
+        this.$store.state.user_info[this.$store.state.user.id].motto = this.motto
+        this.motto = ""
+      });
     }
   },
   components: {

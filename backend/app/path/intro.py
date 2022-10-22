@@ -13,7 +13,7 @@ router = APIRouter(
 @router.get("/banner", response_model=list[schemas.Banner])
 async def intro_banner(
     db: Session = Depends(get_db),
-    _: models.Users = Depends(check_user),
+    _: models.User = Depends(check_user),
 ) -> list[schemas.Banner]:
     """获取推广信息"""
     return db.query(models.Banner).all()
@@ -23,7 +23,7 @@ async def intro_banner(
 async def banner_hits(
     start: int,
     db: Session = Depends(get_db),
-    _: models.Users = Depends(check_user),
+    _: models.User = Depends(check_user),
 ) -> None:
     """推广栏统计"""
     banner: models.Banner = db.query(models.Banner).filter(
@@ -37,7 +37,7 @@ async def banner_hits(
 @router.get("/tag", response_model=list[str])
 async def intro_tag(
     db: Session = Depends(get_db),
-    _: models.Users = Depends(check_user),
+    _: models.User = Depends(check_user),
 ) -> list[str]:
     """获取推广标签"""
     return []
@@ -46,7 +46,7 @@ async def intro_tag(
 @router.get("/user", response_model=list[schemas.UserOut])
 async def intro_user(
     db: Session = Depends(get_db),
-    _: models.Users = Depends(check_user),
+    _: models.User = Depends(check_user),
 ) -> list[schemas.UserOut]:
     """获取推广用户"""
-    return db.query(models.Users).limit(12).all()
+    return db.query(models.User).limit(12).all()

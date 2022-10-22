@@ -20,7 +20,8 @@
       </template>
       <!-- 其他信息 -->
       <template #action>
-        <n-text> {{ $store.state.user_info[id]?.id }} </n-text>
+        <n-text v-if="$store.state.user_info[id]?.motto">{{ $store.state.user_info[id]?.motto }}</n-text>
+        <n-text v-else depth="3" underline>这位用户很懒，没有留言哦。</n-text>
       </template>
     </n-card>
   </n-popover>
@@ -29,14 +30,14 @@
 <script>
 import axios from "axios";
 export default {
-  props: { id: { type: String, default: "" }, },
+  props: { id: {  default: "" } },
   data() {
     // 判断是否已加载过此信息
     if (!this.$store.state.user_info[this.id] && this.id) {
       // 如果没有，塞入默认信息防止多次请求
       this.$store.commit("insert_info", { id: this.id });
       // 发送请求获取默认数据
-      axios.get("/users/" + this.id).then((re) => {
+      axios.get("/info/" + this.id).then((re) => {
         this.$store.commit("insert_info", re.data);
       });
     }

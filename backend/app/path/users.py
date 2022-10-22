@@ -1,6 +1,5 @@
 from secrets import token_hex
 from fastapi import APIRouter, HTTPException, Depends, Header
-from sqlalchemy.exc import SQLAlchemyError
 
 from ..base import models, schemas
 from ..utils import new_account, get_code_email
@@ -14,12 +13,12 @@ router = APIRouter(
 )
 
 
-@router.get("/", response_model=schemas.UserOut)
+@router.get("/", response_model=schemas.InfoOut)
 async def read_user(
-    user: models.Users = Depends(check_user),
-) -> schemas.UserOut:
+    user: models.User = Depends(check_user),
+) -> schemas.InfoOut:
     """获取用户自身"""
-    return user
+    return user.info
 
 
 @router.post("/", response_model=schemas.Msg)
@@ -28,30 +27,29 @@ async def create_user(
     db: Session = Depends(get_db),
 ) -> schemas.Msg:
     """创建新用户"""
-    if db.query(models.Users).filter(models.Users.email == data.email).first():
+    if db.query(models.User).filter(models.User.email == data.email).first():
         raise HTTPException(400, "请更换邮箱")
-    data.password = hasher(data.password)
 
-    while user := models.Users(**data.dict()):
-        try:
-            # 创建用户
-            db.add(user)
-            db.commit()
-            # 刷新用户信息
-            db.refresh(user)
-            # 发送邮件到用户
-            new_account(data.email, data.name)
-        except SQLAlchemyError:
-            # id 碰撞
-            continue
-        except Exception:
-            # 创建成功但邮箱无法收件
-            db.delete(user)
-            db.commit()
-            return {"detail": "无法访问的邮箱"}
+    user = models.User()
+    user.email = data.email
+    user.password = hasher(data.password)
+
+    try:
+        # 创建用户
+        db.add(user)
+        db.commit()
+        # 刷新用户信息
+        db.refresh(user)
+        # 发送邮件到用户
+        # new_account(data.email, data.name)
+    except Exception:
+        # 创建成功但邮箱无法收件
+        db.delete(user)
+        db.commit()
+        return {"detail": "无法访问的邮箱"}
 
     # 默认创建用户空信息
-    db.add(models.Info(id=user.id))
+    db.add(models.Info(id=user.id, name=data.name))
     db.commit()
     return {}
 
@@ -60,7 +58,7 @@ async def create_user(
 async def update_user(
     data: schemas.UserIn, token: str, code: str = Header(...),
     db: Session = Depends(get_db),
-    user: models.Users = Depends(check_user),
+    user: models.User = Depends(check_user),
 ) -> schemas.Msg:
     """更新用户信息"""
     if data.password or data.email:
@@ -68,9 +66,14 @@ async def update_user(
             assert user.id == verify_token(code, token)
         except Exception:
             raise HTTPException(400, "验证码无效或失效")
-    data.password = hasher(data.password)
-    data = data.dict(exclude_defaults=True) | {"info": None}
-    db.query(models.Users).filter(models.Users.id == user.id).update(data)
+    if data.name:
+        user.info.name = data.name
+    if data.password:
+        user.password = hasher(data.password)
+    if data.email:
+        user.email = data.email
+    # data = data.dict(exclude_defaults=True) | {"info": None}
+    # db.query(models.User).filter(models.User.id == user.id).update(data)
     db.commit()
     return {}
 
@@ -78,27 +81,17 @@ async def update_user(
 @router.delete("/", response_model=schemas.Msg)
 async def cancel_user(
     db: Session = Depends(get_db),
-    user: models.Users = Depends(check_user),
+    user: models.User = Depends(check_user),
 ) -> schemas.Msg:
     """申请注销账号"""
-    for item in db.query(models.Items).filter(
-            models.Items.author == user.id).all():
-        item: models.Items
-        db.query(models.Comment).filter(
-            models.Comment.item == item.id).delete()
-        db.delete(item)
-    db.query(models.Comment).filter(
-        models.Items.author == user.id).delete()
-    db.query(models.Info).filter(
-        models.Info.id == user.id).delete()
-    db.delete(user)
+    user.active = 0
     db.commit()
     return {}
 
 
-@router.post("/t", response_model=schemas.VerifyCode)
+@router.post("/token", response_model=schemas.VerifyCode)
 async def get_code(
-    user: models.Users = Depends(check_user),
+    user: models.User = Depends(check_user),
 ) -> schemas.VerifyCode:
     """获取验证码"""
     code = token_hex(4)
@@ -110,10 +103,10 @@ async def get_code(
 async def read_user(
     user_id: str,
     db: Session = Depends(get_db),
-    _: models.Users = Depends(check_user),
+    _: models.User = Depends(check_user),
 ) -> schemas.UserOut:
     """获取用户信息"""
-    user = db.query(models.Users).filter(models.Users.id == user_id).first()
+    user = db.query(models.User).filter(models.User.id == user_id).first()
     if user:
         return user
     raise HTTPException(404)

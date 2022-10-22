@@ -174,7 +174,7 @@ export default {
     });
     return {
       user: this.$store.state.user,
-      c: { body: "", reply: "" },
+      c: { body: "", reply: 0 },
       marked,
       data: {},
       comment: [],

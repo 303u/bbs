@@ -75,7 +75,7 @@ export default {
     action: { default: true },
     header: { default: true },
     url: { type: String, default: "/items/" },
-    author: { type: String, default: "" },
+    author: { default: "" },
   },
   data() {
     this.$nextTick(this.get_data)
@@ -124,16 +124,8 @@ export default {
   },
   // 监视变动
   watch: {
-    url() {
-      if (this.url) {
-        axios.get(this.url).then((req) => {
-          this.page = 1;
-          this.lock = !req.data.length < 40;
-          this.data = req.data;
-          this.list = this.data.slice(0, 5);
-        });
-      }
-    },
+    url() { this.get_data(); },
+    author() { this.get_data(); }
   },
   components: { PopupCardVue },
 };

@@ -13,7 +13,7 @@ router = APIRouter(
 @router.get("/{item_id}", response_model=list[schemas.CommentOut])
 async def select(
     item_id: str, skip: int = 0, db: Session = Depends(get_db),
-    _: models.Users = Depends(check_user),
+    _: models.User = Depends(check_user),
 ) -> list[schemas.CommentOut]:
     """查询评论"""
     return db.query(models.Comment).filter(
@@ -23,10 +23,10 @@ async def select(
 @router.post("/", response_model=schemas.Msg)
 async def insert(
     user_in: schemas.CommentIn, db: Session = Depends(get_db),
-    user: models.Users = Depends(check_user),
+    user: models.User = Depends(check_user),
 ) -> schemas.Msg:
     """新建评论"""
-    talk = db.query(models.Items).filter(models.Items.id == user_in.item)
+    talk = db.query(models.Item).filter(models.Item.id == user_in.item)
     if not talk.first():
         raise HTTPException(404, "项目不存在")
     db.add(models.Comment(**user_in.dict(
@@ -38,7 +38,7 @@ async def insert(
 @ router.delete("/{talk_id}", response_model=schemas.Msg)
 async def delete(
     talk_id: str, db: Session = Depends(get_db),
-    user: models.Users = Depends(check_user),
+    user: models.User = Depends(check_user),
 ) -> schemas.Msg:
     """通过id删除评论"""
     talk: models.Comment | None = db.query(models.Comment).filter(

@@ -42,7 +42,7 @@
         </n-space>
         <template #footer>
           强大的能力改变你对数据库和 SQL 的看法，
-          以其对象关系映射器（ORM）而闻名。 可以链接所有常见的数据库。
+          以其对象关系映射器（ORM）而闻名。
         </template>
       </n-card>
     </n-gi>

@@ -32,7 +32,7 @@ import axios from "axios";
 export default {
   data() {
     axios.get("/intro/banner").then((req) => {
-      this.banner = req.data;
+      if (req.data.length) this.banner = req.data;
     })
     return {
       banner: [

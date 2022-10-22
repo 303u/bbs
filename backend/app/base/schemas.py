@@ -26,8 +26,7 @@ class UserIn(BaseModel):
 
 class UserOut(BaseModel):
     """用户模型输出"""
-    id: str = None
-    name: str = None
+    id: int = None
 
     class Config:
         orm_mode = True
@@ -37,56 +36,29 @@ class UserFull(UserOut):
     """用户最终模型"""
     info: str = None
     email: str = None
-    admin: bool = None
-    active: bool = None
     password: str = None
-
-
-# 数据系列
-class ItemIn(BaseModel):
-    """用户项目输入"""
-    title: str = Field(..., min_length=1, max_length=64)
-    tag: str = Field(None, max_length=128)
-    content: str = Field(None, max_length=6500)
-    description: str = Field(None, max_length=200)
-
-
-class ItemOut(BaseModel):
-    """用户项目输出"""
-    id: str = None
-    author: str = None
-    title: str = None
-    time: str = None
-    tag: str = None
-    description: str = None
-    hits: int = None
-
-    class Config:
-        orm_mode = True
-
-
-class ItemFullOut(ItemOut):
-    """用户项目内容"""
-    content: str = None
-
-
-class ItemFull(ItemFullOut):
-    """项目最终模型"""
-    ban: bool = None
+    active: bool = None
+    admin: bool = None
 
 
 # 用户详细信息
 class InfoIn(BaseModel):
     """用户详细信息输入"""
+    name: str = None
+    motto: str = None
+    phone: str = None
+
     gender: bool = None
     city: str = None
     hobby: str = None
     birthday: int = None
-    motto: str = None
 
 
 class InfoOut(InfoIn):
     """用户详细信息输出"""
+    id: int = None
+    phone: bool = None
+
     last_login: int = None
     item_count: int = None
 
@@ -94,20 +66,59 @@ class InfoOut(InfoIn):
         orm_mode = True
 
 
+# 数据系列
+class ItemIn(BaseModel):
+    """用户项目输入"""
+    title: str = Field(..., min_length=1, max_length=64)
+    tag: str = Field(None, max_length=128)
+    description: str = Field(None, max_length=200)
+    content: str = Field(None, min_length=1)
+
+
+class ItemOut(BaseModel):
+    """用户项目输出"""
+    id: int = None
+
+    author: str = None
+    title: str = None
+    tag: str = None
+    description: str = None
+
+    hits: int = None
+    time: str = None
+
+    class Config:
+        orm_mode = True
+
+
+class ItemFull(ItemOut):
+    """项目最终模型"""
+    content: str = None
+    ban: bool = None
+
+
+# 真正读取content内容的项目模型
+class ContentOut(ItemOut):
+    """用户项目内容"""
+    content: str = None
+
+
 # 评论系列
 class CommentIn(BaseModel):
     """评论模型输入"""
-    body: str = Field(..., min_length=1, max_length=300)
-    item: str = Field(..., min_length=16, max_length=16)
-    reply: str = Field(None, max_length=16)
+    item: int = Field(...)
+    reply: int = Field(0)
+    body: str = Field(..., max_length=300)
 
 
 class CommentOut(BaseModel):
     """评论模型输出"""
-    id: str = None
+    id: int = None
+
     item: str = None
     author: str = None
     reply: str = None
+
     body: str = None
     time: str = None
 
@@ -120,11 +131,13 @@ class Banner(BaseModel):
     """推广项目模型"""
     url: str = None
     img: str = None
+
     title: str = None
+    description: str = None
+
     start: int = None
     end: int = None
     hits: int = None
-    description: str = None
 
     class Config:
         orm_mode = True
