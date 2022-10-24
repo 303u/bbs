@@ -41,7 +41,7 @@ async def create_user(
         # 刷新用户信息
         db.refresh(user)
         # 发送邮件到用户
-        # new_account(data.email, data.name)
+        new_account(data.email, data.name)
     except Exception:
         # 创建成功但邮箱无法收件
         db.delete(user)
@@ -72,8 +72,6 @@ async def update_user(
         user.password = hasher(data.password)
     if data.email:
         user.email = data.email
-    # data = data.dict(exclude_defaults=True) | {"info": None}
-    # db.query(models.User).filter(models.User.id == user.id).update(data)
     db.commit()
     return {}
 

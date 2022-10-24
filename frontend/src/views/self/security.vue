@@ -177,13 +177,11 @@ export default {
         sessionStorage.clear();
         localStorage.clear();
         this.$store.commit("clear_all")
-        setTimeout(() => {
-          this.$router.push("/verify");
-        }, 3000);
+        this.$router.push("/verify");
       });
     },
     get_token() {
-      axios.post("/users/k/").then((req) => {
+      axios.post("/users/token").then((req) => {
         this.code = req.data.code;
       });
     },

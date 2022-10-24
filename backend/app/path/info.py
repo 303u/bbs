@@ -39,8 +39,11 @@ async def update_user(
     user: models.User = Depends(check_user),
 ) -> schemas.Msg:
     """更新用户信息"""
-    db.query(models.Info).filter(models.Info.id == user.id).update(
-        data.dict(exclude_defaults=True))
+    if data.phone:
+        # TODO 需要加密后再存入
+        data.phone = None
+    for key in data.dict(exclude_defaults=True):
+        setattr(user.info, key, getattr(data, key))
     db.commit()
     return {}
 

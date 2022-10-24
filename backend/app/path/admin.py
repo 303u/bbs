@@ -1,5 +1,5 @@
 from fastapi import APIRouter, HTTPException, Depends
-from datetime import datetime, timedelta
+# from datetime import datetime, timedelta
 
 from ..base import models, schemas
 from ..core.security import hasher
@@ -25,7 +25,7 @@ async def read_users(
 async def update_user(
     user_id: str, data: schemas.UserFull,
     db: Session = Depends(get_db),
-    # _: models.User = Depends(check_admin),
+    _: models.User = Depends(check_admin),
 ) -> schemas.Msg:
     """通过id更新用户信息"""
     if not db.query(models.User).filter(models.User.id == user_id).first():
