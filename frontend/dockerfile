@@ -6,6 +6,7 @@ LABEL by="June"
 
 # 允许指定容器使用的端口
 EXPOSE 80
+EXPOSE 443
 
 # 指定工作路径
 WORKDIR /
